@@ -1,0 +1,55 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h2>System Overview</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="card-title">@ViewBag.TotalUsers</h3>
+                <p class="card-text">Total Users</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="card-title">@ViewBag.TotalProposals</h3>
+                <p class="card-text">Total Proposals</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="card-title">@ViewBag.ConfirmedMatches</h3>
+                <p class="card-text">Confirmed Matches</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="card-title">@ViewBag.PendingProposals</h3>
+                <p class="card-text">Pending Proposals</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="card-title">@ViewBag.TotalMatches</h3>
+                <p class="card-text">Total Matches</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a asp-action="UserManagement" class="btn btn-primary">User Management</a>
+    <a asp-action="MigrationStatus" class="btn btn-secondary">Migration Status</a>
+</div>

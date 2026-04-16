@@ -1,0 +1,47 @@
+@model BlindMatchPAS.Models.ProjectProposal
+@{
+    ViewData["Title"] = "Proposal Details";
+}
+
+<h2>Proposal Details</h2>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <span class="badge rounded-pill @(Model.Status switch {
+            BlindMatchPAS.Models.ProposalStatus.Pending => "bg-warning text-dark",
+            BlindMatchPAS.Models.ProposalStatus.UnderReview => "bg-info",
+            BlindMatchPAS.Models.ProposalStatus.Matched => "bg-success",
+            BlindMatchPAS.Models.ProposalStatus.Withdrawn => "bg-secondary",
+            _ => "bg-secondary"
+        })">
+            @Model.Status
+        </span>
+        <span class="float-end">@Model.ResearchArea?.Name</span>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">@Model.Title</h5>
+        <p class="card-text">@Model.Abstract</p>
+        <p class="card-text"><strong>Technical Stack:</strong> @(Model.TechnicalStack ?? "Not specified")</p>
+        <p class="card-text"><small class="text-muted">Created: @Model.CreatedAt.ToShortDateString()</small></p>
+    </div>
+</div>
+
+@if (ViewBag.RevealedMatch != null)
+{
+    <div class="card border-success">
+        <div class="card-header bg-success text-white">
+            Revealed Supervisor Details
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">@ViewBag.RevealedMatch.Supervisor.FullName</h5>
+            <p class="card-text">
+                <strong>Email:</strong> @ViewBag.RevealedMatch.Supervisor.Email<br />
+                <strong>Expertise:</strong> Supervisor in @Model.ResearchArea?.Name
+            </p>
+        </div>
+    </div>
+}
+
+<div class="mt-3">
+    <a asp-action="Dashboard" class="btn btn-secondary">Back to Dashboard</a>
+</div>

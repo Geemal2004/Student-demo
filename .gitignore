@@ -1,0 +1,39 @@
+# Build artifacts
+[Bb]in/
+[Oo]bj/
+out/
+artifacts/
+TestResults/
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# IDE folders
+.vs/
+.idea/
+
+# VS Code (keep shared workspace config if needed)
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# NuGet
+*.nupkg
+*.snupkg
+
+# Logs
+*.log
+
+# Local database files
+*.mdf
+*.ldf
+
+# OS generated files
+.DS_Store
+Thumbs.db

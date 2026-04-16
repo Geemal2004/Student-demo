@@ -1,0 +1,45 @@
+@model IEnumerable<BlindMatchPAS.Models.ResearchArea>
+@{
+    ViewData["Title"] = "Research Areas";
+}
+
+<h2>Research Areas</h2>
+<p>
+    <a asp-action="CreateResearchArea" class="btn btn-primary">Create New Area</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var area in Model)
+        {
+            <tr>
+                <td>@area.Name</td>
+                <td>@area.Description</td>
+                <td>
+                    <span class="badge @(area.IsActive ? "bg-success" : "bg-secondary")">
+                        @(area.IsActive ? "Active" : "Inactive")
+                    </span>
+                </td>
+                <td>
+                    <a asp-action="EditResearchArea" asp-route-id="@area.Id" class="btn btn-sm btn-secondary">Edit</a>
+                    <form asp-action="DeleteResearchArea" method="post" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@area.Id" />
+                        <button type="submit" class="btn btn-sm btn-danger"
+                                onclick="return confirm('Deactivate this research area?');">
+                            Deactivate
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

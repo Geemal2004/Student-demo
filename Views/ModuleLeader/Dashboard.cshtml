@@ -1,0 +1,77 @@
+@model IEnumerable<BlindMatchPAS.Models.SupervisorMatch>
+@{
+    ViewData["Title"] = "Module Leader Dashboard";
+}
+
+<h2>All Matches</h2>
+
+<div class="mb-3">
+    <form method="get" class="form-inline">
+        <label class="me-2">Filter by Status:</label>
+        <select name="statusFilter" class="form-select me-2" style="width: auto;">
+            <option value="">All</option>
+            <option value="Pending">Pending</option>
+            <option value="UnderReview">Under Review</option>
+            <option value="Matched">Matched</option>
+            <option value="Withdrawn">Withdrawn</option>
+        </select>
+        <button type="submit" class="btn btn-secondary">Filter</button>
+    </form>
+</div>
+
+@if (Model.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Project Title</th>
+                <th>Supervisor</th>
+                <th>Research Area</th>
+                <th>Status</th>
+                <th>Confirmed</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var match in Model)
+            {
+                <tr>
+                    <td>@match.Proposal?.Student?.FullName</td>
+                    <td>@match.Proposal?.Title</td>
+                    <td>@match.Supervisor?.FullName</td>
+                    <td>@match.Proposal?.ResearchArea?.Name</td>
+                    <td>
+                        <span class="badge @(match.Proposal?.Status switch {
+                            BlindMatchPAS.Models.ProposalStatus.Pending => "bg-warning text-dark",
+                            BlindMatchPAS.Models.ProposalStatus.UnderReview => "bg-info",
+                            BlindMatchPAS.Models.ProposalStatus.Matched => "bg-success",
+                            BlindMatchPAS.Models.ProposalStatus.Withdrawn => "bg-secondary",
+                            _ => "bg-secondary"
+                        })">
+                            @match.Proposal?.Status
+                        </span>
+                    </td>
+                    <td>@(match.IsConfirmed ? match.ConfirmedAt?.ToShortDateString() : "No")</td>
+                    <td>
+                        @if (match.IsConfirmed)
+                        {
+                            <form asp-action="Reassign" method="post" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="matchId" value="@match.Id" />
+                                <select name="newSupervisorId" class="form-select form-select-sm" style="width: auto; display: inline;">
+                                    <option value="">Reassign to...</option>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-warning">Reassign</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-muted">No matches found.</p>
+}

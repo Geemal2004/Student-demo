@@ -1,0 +1,47 @@
+@model IEnumerable<BlindMatchPAS.DTOs.BlindProposalDto>
+@{
+    ViewData["Title"] = "Browse Proposals";
+}
+
+<h2>Browse Proposals (Blind View)</h2>
+<p class="text-muted">Student identities are hidden until you confirm a match.</p>
+
+@if (Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Abstract</th>
+                <th>Technical Stack</th>
+                <th>Research Area</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var proposal in Model)
+            {
+                <tr>
+                    <td>@proposal.Title</td>
+                    <td>@proposal.Abstract.Substring(0, Math.Min(100, proposal.Abstract.Length))...</td>
+                    <td>@proposal.TechnicalStack</td>
+                    <td>@proposal.ResearchAreaName</td>
+                    <td>
+                        <form asp-action="ExpressInterest" method="post" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="proposalId" value="@proposal.Id" />
+                            <button type="submit" class="btn btn-sm btn-primary">Express Interest</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info">
+        No proposals available matching your expertise areas.
+        <a asp-action="SetExpertise">Update your expertise</a> to see more proposals.
+    </div>
+}

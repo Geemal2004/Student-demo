@@ -1,0 +1,17 @@
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
+
+namespace BlindMatchPAS.Models;
+
+public class ApplicationUser : IdentityUser
+{
+    [Required]
+    [MaxLength(100)]
+    public string FullName { get; set; } = string.Empty;
+
+    // NOTE: Role is NO LONGER stored here. Use ASP.NET Identity roles via UserManager.GetRolesAsync()
+    // This ensures role consistency with the Identity system
+
+    public ICollection<SupervisorExpertise> ExpertiseTags { get; set; } = new List<SupervisorExpertise>();
+    public ICollection<ProjectProposal> Proposals { get; set; } = new List<ProjectProposal>();
+}
