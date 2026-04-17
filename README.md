@@ -1,134 +1,133 @@
 # BlindMatch PAS
 
-Project Approval System with Blind Matching for academic project supervision.
+BlindMatch PAS is a Project Approval System with blind matching between students and supervisors.
 
-## Overview
+## Current Architecture
 
-BlindMatch PAS enables a **blind matching process** between students and supervisors:
+This repository now uses an API-first backend plus Angular SPA frontend:
 
-1. **Students** submit project proposals anonymously
-2. **Supervisors** browse proposals without seeing student identities
-3. When a **supervisor confirms a match**, both identities are revealed to each other
+- Backend: ASP.NET Core Web API, EF Core, ASP.NET Identity, role-based authorization, audit logging
+- Frontend: Angular standalone SPA with role-based routing, guards, interceptor, typed API services, Angular Material UI
+
+Razor MVC views are removed from the active runtime flow.
+
+## Blind Matching Rules
+
+The server enforces blind workflow rules:
+
+1. Students submit proposals anonymously.
+2. Supervisors browse only blind proposal DTOs (no student identity fields).
+3. Supervisors express interest.
+4. Identity is revealed only when a valid supervisor confirmation completes.
+5. Module Leader can reassign confirmed matches using controlled workflow.
+
+## Role Journeys (Angular SPA)
+
+- Student:
+	- Dashboard: `/student`
+	- Proposals list: `/student/proposals`
+	- Create proposal: `/student/create`
+	- Proposal details: `/student/proposals/:id`
+	- Proposal edit: `/student/proposals/:id/edit`
+- Supervisor:
+	- Dashboard: `/supervisor`
+	- Browse blind proposals: `/supervisor/browse`
+	- Interests queue: `/supervisor/interests`
+	- Confirmed matches: `/supervisor/confirmed`
+	- Expertise profile: `/supervisor/expertise`
+- Module Leader:
+	- Dashboard: `/module-leader`
+	- Match oversight/reassignment: `/module-leader/matches`
+	- Research area CRUD: `/module-leader/research-areas`
+	- User directory: `/module-leader/users`
+- SysAdmin:
+	- Dashboard: `/admin`
+	- User management: `/admin/users`
+	- Migration status: `/admin/migrations`
+	- Audit logs: `/admin/audit-logs`
 
 ## Prerequisites
 
-- .NET 8 SDK
-- SQL Server LocalDB (included with Visual Studio)
-- Windows 10/11
+- .NET SDK 10.x
+- SQL Server (LocalDB or SQL Server instance)
+- Node.js 22.x
+- npm 11.x
 
-## Setup Steps
+## Run Backend API
 
 ```bash
-# Clone and navigate to project
-cd BlindMatchPAS
-
-# Restore packages
 dotnet restore
-
-# Create database migration (if needed)
-dotnet ef migrations add InitialCreate
-
-# Apply migrations to local database
-dotnet ef database update
-
-# Run the application
 dotnet run
 ```
 
-The application will be available at `https://localhost:5001` or `http://localhost:5000`.
+API and Swagger (development) run on the backend HTTPS URL configured by launch settings.
 
-## Default Credentials
-
-| Role         | Email                    | Password    |
-|--------------|--------------------------|-------------|
-| SysAdmin     | admin@blindmatch.ac.lk   | Admin@123456|
-| ModuleLeader | leader@blindmatch.ac.lk   | Leader@123456|
-| Student      | (register via UI)        | (your choice)|
-| Supervisor   | (register via UI)        | (your choice)|
-
-## Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      PRESENTATION                          │
-│  AccountController │ StudentController │ SupervisorCtrl   │
-│  ModuleLeaderController │ AdminController                  │
-├─────────────────────────────────────────────────────────────┤
-│                      SERVICES (DI)                        │
-│  ProposalService │ MatchingService │ ResearchAreaService │
-│  UserManagementService │ ExpertiseService                 │
-├─────────────────────────────────────────────────────────────┤
-│                      DATA ACCESS                          │
-│           ApplicationDbContext (EF Core)                 │
-├─────────────────────────────────────────────────────────────┤
-│                      DOMAIN MODELS                        │
-│  ApplicationUser │ ProjectProposal │ SupervisorMatch    │
-│  ResearchArea │ SupervisorExpertise                      │
-└─────────────────────────────────────────────────────────────┘
-```
-
-## Key Security Features
-
-- **BlindProposalDto**: Ensures supervisors never see student identities
-- **Identity Reveal**: Only happens after supervisor explicitly confirms match
-- **Role-Based Access Control**: Authorization policies enforce role separation
-- **Anti-Forgery Tokens**: All POST forms protected
-- **Security Headers**: X-Content-Type-Options, X-Frame-Options, Referrer-Policy
-
-## Running Tests
+## Run Angular Frontend
 
 ```bash
-# Run all tests
+cd frontend
+npm install
+npm run start
+```
+
+Frontend runs at `http://localhost:4200`.
+
+Note: Angular scripts use increased Node heap (`--max_old_space_size=4096`) to reduce JS heap OOM failures during large builds/tests.
+
+## Build Commands
+
+```bash
+# Backend
+dotnet build
+
+# Frontend
+cd frontend
+npm run build
+```
+
+Frontend production output is generated at:
+
+`frontend/dist/frontend`
+
+## Test Commands
+
+```bash
+# Backend (currently validates solution build/state)
 dotnet test
 
-# Run with coverage
-dotnet test --collect:"XPlat Code Coverage"
+# Frontend CI-style unit tests
+cd frontend
+npm run test:ci
 ```
 
-## Test Coverage
+## Default Seed Credentials
 
-- **Unit Tests**: MatchingServiceTests, ProposalServiceTests
-- **Integration Tests**: ProposalIntegrationTests (full workflow)
-- **Functional Test Cases**: Documented as comments for manual testing
+| Role         | Email                          | Password      |
+|--------------|--------------------------------|---------------|
+| SysAdmin     | admin@blindmatch.ac.lk         | Admin@123456  |
+| ModuleLeader | leader@blindmatch.ac.lk        | Leader@123456 |
+| Supervisor   | supervisor1@blindmatch.ac.lk   | Super@123456  |
+| Supervisor   | supervisor2@blindmatch.ac.lk   | Super@123456  |
+| Student      | student1@blindmatch.ac.lk      | Student@123   |
+| Student      | student2@blindmatch.ac.lk      | Student@123   |
 
-## Project Structure
+## API Surface (Role Scoped)
 
-```
+- `/api/auth/*`
+- `/api/student/*`
+- `/api/supervisor/*`
+- `/api/moduleleader/*`
+- `/api/admin/*`
+
+## Repository Structure
+
+```text
 BlindMatchPAS/
-├── Controllers/          # MVC Controllers
-├── Data/                  # DbContext and SeedData
-├── DTOs/                  # Data Transfer Objects
-├── Models/                # Domain entities
+├── Controllers/Api/        # API controllers
+├── Data/                   # DbContext and seed/bootstrap
+├── DTOs/                   # DTO contracts
+├── Models/                 # Domain entities
 ├── Services/               # Business logic layer
-│   └── Interfaces/         # Service contracts
-└── Views/                 # Razor views
-    ├── Account/
-    ├── Admin/
-    ├── Error/
-    ├── ModuleLeader/
-    ├── Shared/
-    ├── Student/
-    └── Supervisor/
+├── frontend/               # Angular SPA
+└── Migrations/             # EF Core migrations
 ```
-
-## Blind Matching Flow
-
-```
-1. Student submits proposal (anonymous)
-   ↓
-2. Proposal appears in Supervisor browse (NO student info)
-   ↓
-3. Supervisor expresses interest → Status: UnderReview
-   ↓
-4. Supervisor confirms match → IsRevealed = TRUE
-   ↓
-5. BOTH parties can now see each other's details
-```
-
-## Technologies Used
-
-- ASP.NET Core 8 MVC
-- Entity Framework Core 8
-- ASP.NET Core Identity
-- Bootstrap 5
-- xUnit + Moq + FluentAssertions

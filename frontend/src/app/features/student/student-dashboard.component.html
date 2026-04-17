@@ -1,0 +1,19 @@
+<section class="stats-grid" *ngIf="dashboard() as d">
+  <mat-card><h4>Total</h4><p>{{ d.totalProposals }}</p></mat-card>
+  <mat-card><h4>Pending</h4><p class="status-pending">{{ d.pendingCount }}</p></mat-card>
+  <mat-card><h4>Under Review</h4><p class="status-review">{{ d.underReviewCount }}</p></mat-card>
+  <mat-card><h4>Matched</h4><p class="status-matched">{{ d.matchedCount }}</p></mat-card>
+</section>
+
+<section>
+  <div class="section-head">
+    <h3>Recent proposals</h3>
+    <a mat-flat-button color="primary" routerLink="/student/create">New proposal</a>
+  </div>
+
+  <mat-card class="proposal-card" *ngFor="let item of dashboard()?.recentProposals">
+    <h4>{{ item.title }}</h4>
+    <p>{{ item.abstract }}</p>
+    <small>{{ item.researchAreaName }} • {{ item.createdAt | date: 'mediumDate' }}</small>
+  </mat-card>
+</section>

@@ -1,0 +1,21 @@
+.stat-card {
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  padding: 0.9rem;
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(15, 30, 68, 0.05);
+}
+
+.label {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+h3 {
+  margin: 0.45rem 0;
+  font-size: 1.8rem;
+}
+
+small {
+  color: var(--text-muted);
+}

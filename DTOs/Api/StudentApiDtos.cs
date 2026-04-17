@@ -1,0 +1,31 @@
+using System.ComponentModel.DataAnnotations;
+using BlindMatchPAS.DTOs;
+
+namespace BlindMatchPAS.DTOs.Api;
+
+public class StudentDashboardDto
+{
+    public int TotalProposals { get; set; }
+    public int PendingCount { get; set; }
+    public int UnderReviewCount { get; set; }
+    public int MatchedCount { get; set; }
+    public int WithdrawnCount { get; set; }
+    public List<StudentProposalDto> RecentProposals { get; set; } = new();
+}
+
+public class ProposalUpsertDto
+{
+    [Required]
+    [StringLength(150, MinimumLength = 10)]
+    public string Title { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(1000, MinimumLength = 100)]
+    public string Abstract { get; set; } = string.Empty;
+
+    [StringLength(200)]
+    public string? TechnicalStack { get; set; }
+
+    [Required]
+    public int ResearchAreaId { get; set; }
+}

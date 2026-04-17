@@ -1,7 +1,13 @@
+using System.Text;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using BlindMatchPAS.Data;
+using BlindMatchPAS.DTOs.Api;
 using BlindMatchPAS.Models;
 using BlindMatchPAS.Services;
 using BlindMatchPAS.Services.Interfaces;
@@ -13,7 +19,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Identity with strict password policy
-builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
     options.Password.RequiredLength = 8;
@@ -21,11 +27,75 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     options.Password.RequireLowercase = true;
     options.Password.RequireNonAlphanumeric = false;
 })
-.AddRoles<IdentityRole>()
-.AddEntityFrameworkStores<ApplicationDbContext>();
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
 
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
+// DECISION: Using JWT Bearer tokens for SPA authentication
+// This allows stateless API authentication suitable for Angular
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "BlindMatchPAS_SecretKey_ForDevelopment_2026!";
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "BlindMatchPAS";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "BlindMatchPAS";
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+    };
+});
+
+// CORS for Angular development
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularDev", policy =>
+    {
+        policy.WithOrigins("https://localhost:4200", "http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
+// API Controllers only (no MVC views)
+builder.Services.AddControllers();
+builder.Services.AddProblemDetails();
+
+// Swagger/OpenAPI documentation
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "BlindMatchPAS API", Version = "v1" });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token.",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 // Register services
 builder.Services.AddScoped<IAuditService, AuditService>();
@@ -34,6 +104,7 @@ builder.Services.AddScoped<IMatchingService, MatchingService>();
 builder.Services.AddScoped<IResearchAreaService, ResearchAreaService>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<IExpertiseService, ExpertiseService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Authorization policies
 builder.Services.AddAuthorization(options =>
@@ -54,28 +125,41 @@ app.Use(async (context, next) =>
     await next();
 });
 
-// Exception handler
-if (!app.Environment.IsDevelopment())
+// Swagger in development
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        context.Response.ContentType = "application/json";
+
+        await context.Response.WriteAsJsonAsync(new ApiErrorDto
+        {
+            Message = app.Environment.IsDevelopment()
+                ? exception?.Message ?? "An unexpected error occurred."
+                : "An unexpected error occurred.",
+            Code = "ServerError"
+        });
+    });
+});
+
 app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseRouting();
+
+// CORS for Angular
+app.UseCors("AllowAngularDev");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Custom error pages
-app.UseStatusCodePagesWithReExecute("/Error/{0}");
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
-app.MapRazorPages();
+// API endpoints
+app.MapControllers();
 
 // Seed data on startup
 using (var scope = app.Services.CreateScope())

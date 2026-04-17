@@ -1,0 +1,34 @@
+mat-card {
+  border-radius: 14px;
+}
+
+.create-card {
+  margin-bottom: 0.8rem;
+}
+
+.form-grid {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.form-grid.compact {
+  gap: 0.5rem;
+}
+
+.area-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+@media (max-width: 960px) {
+  .area-grid {
+    grid-template-columns: 1fr;
+  }
+}

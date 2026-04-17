@@ -1,0 +1,41 @@
+mat-form-field {
+  width: 100%;
+}
+
+.match-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+mat-card {
+  border-radius: 14px;
+}
+
+h3 {
+  margin-top: 0;
+}
+
+.reassign-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.6rem;
+  align-items: center;
+  margin-top: 0.7rem;
+}
+
+@media (max-width: 960px) {
+  .match-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .reassign-row {
+    grid-template-columns: 1fr;
+  }
+
+  .reassign-row button {
+    width: 100%;
+  }
+}

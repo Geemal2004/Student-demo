@@ -1,0 +1,32 @@
+<div class="auth-wrap">
+  <mat-card>
+    <p class="eyebrow" (click)="toLanding()">BlindMatch PAS</p>
+    <h2>Sign in</h2>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" />
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <mat-error>Enter a valid email.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" formControlName="password" />
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <mat-error>Password must be at least 8 characters.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-checkbox formControlName="rememberMe">Remember me</mat-checkbox>
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">
+        {{ submitting() ? 'Signing in...' : 'Sign in' }}
+      </button>
+    </form>
+
+    <p class="muted">No account yet? <a routerLink="/auth/register">Register here</a></p>
+  </mat-card>
+</div>

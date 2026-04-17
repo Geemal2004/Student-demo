@@ -1,0 +1,36 @@
+.auth-wrap {
+  min-height: 85vh;
+  display: grid;
+  place-items: center;
+}
+
+mat-card {
+  width: min(460px, 94vw);
+  border-radius: 18px;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin: 0;
+  cursor: pointer;
+}
+
+h2 {
+  margin: 0.3rem 0 1rem;
+}
+
+form {
+  display: grid;
+  gap: 0.7rem;
+}
+
+button {
+  margin-top: 0.4rem;
+}
+
+.muted {
+  margin-top: 1rem;
+  color: var(--text-muted);
+}

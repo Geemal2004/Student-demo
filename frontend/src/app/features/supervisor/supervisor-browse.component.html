@@ -1,0 +1,44 @@
+<app-page-header title="Browse Blind Proposals" subtitle="Find suitable projects using title, area, and technical stack cues.">
+  <a actions mat-stroked-button routerLink="/supervisor/interests">My interests</a>
+</app-page-header>
+
+<app-filter-bar>
+  <app-search-box
+    label="Search proposals"
+    placeholder="Title or technical stack"
+    [value]="search()"
+    (valueChange)="updateSearch($event)">
+  </app-search-box>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Sort</mat-label>
+    <mat-select [ngModel]="sort()" (ngModelChange)="updateSort($event)">
+      <mat-option value="newest">Newest</mat-option>
+      <mat-option value="title">Title</mat-option>
+    </mat-select>
+  </mat-form-field>
+</app-filter-bar>
+
+<app-loading-skeleton *ngIf="loading()" [rows]="4"></app-loading-skeleton>
+
+<section *ngIf="!loading() && (results()?.items?.length ?? 0) > 0" class="card-grid">
+  @for (proposal of results()?.items ?? []; track proposal.id) {
+    <app-proposal-card
+      [title]="proposal.title"
+      [abstract]="proposal.abstract"
+      [researchArea]="proposal.researchAreaName"
+      [techStack]="proposal.technicalStack ?? ''"
+      [status]="proposal.status">
+      <div actions>
+        <button mat-flat-button color="primary" (click)="expressInterest(proposal.id)">Express interest</button>
+      </div>
+    </app-proposal-card>
+  }
+</section>
+
+<app-empty-state
+  *ngIf="!loading() && (results()?.items?.length ?? 0) === 0"
+  icon="travel_explore"
+  title="No proposals found"
+  message="Try adjusting filters or search terms to find more opportunities.">
+</app-empty-state>

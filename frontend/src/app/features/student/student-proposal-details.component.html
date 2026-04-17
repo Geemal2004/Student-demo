@@ -1,0 +1,27 @@
+<app-page-header title="Proposal Details" subtitle="Review the full proposal and reveal status.">
+  <a actions mat-stroked-button routerLink="/student/proposals">Back to proposals</a>
+  <a *ngIf="proposal() && isPending(proposal()!.status)" actions mat-flat-button color="primary" [routerLink]="['/student/proposals', proposal()!.id, 'edit']">Edit</a>
+</app-page-header>
+
+<ng-container *ngIf="proposal() as item; else noData">
+  <mat-card>
+    <h2>{{ item.title }}</h2>
+    <p><app-status-badge [status]="item.status"></app-status-badge></p>
+    <p>{{ item.abstract }}</p>
+    <p><strong>Technical stack:</strong> {{ item.technicalStack || 'Not specified' }}</p>
+    <p><strong>Research area:</strong> {{ item.researchAreaName }}</p>
+    <small>Submitted {{ item.createdAt | date:'mediumDate' }}</small>
+  </mat-card>
+
+  <app-reveal-card *ngIf="item.matchedSupervisor" [details]="item.matchedSupervisor"></app-reveal-card>
+  <app-empty-state
+    *ngIf="!item.matchedSupervisor"
+    icon="visibility"
+    title="Identity not revealed yet"
+    message="Supervisor identity appears only after a confirmed blind match.">
+  </app-empty-state>
+</ng-container>
+
+<ng-template #noData>
+  <app-empty-state icon="error" title="Proposal not available" message="The requested proposal could not be loaded."></app-empty-state>
+</ng-template>

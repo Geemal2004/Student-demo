@@ -1,0 +1,23 @@
+<app-page-header title="Confirmed Matches" subtitle="Identity-revealed matches ready for supervision.">
+  <a actions mat-stroked-button routerLink="/supervisor/interests">Back to interests</a>
+</app-page-header>
+
+<app-loading-skeleton *ngIf="loading()" [rows]="4"></app-loading-skeleton>
+
+<section *ngIf="!loading() && confirmed().length > 0" class="confirmed-grid">
+  @for (item of confirmed(); track item.matchId) {
+    <mat-card>
+      <h3>{{ item.projectTitle || 'Untitled project' }}</h3>
+      <p><strong>Student:</strong> {{ item.studentName || 'Unknown student' }}</p>
+      <p><strong>Email:</strong> {{ item.studentEmail || 'Not available' }}</p>
+      <small *ngIf="item.confirmedAt">Confirmed {{ item.confirmedAt | date:'medium' }}</small>
+    </mat-card>
+  }
+</section>
+
+<app-empty-state
+  *ngIf="!loading() && confirmed().length === 0"
+  icon="verified"
+  title="No confirmed matches"
+  message="Once a match is confirmed, student identity and contact details appear here.">
+</app-empty-state>

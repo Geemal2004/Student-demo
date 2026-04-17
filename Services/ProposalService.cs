@@ -201,7 +201,9 @@ public class ProposalService : IProposalService
                 Title = p.Title,
                 Abstract = p.Abstract,
                 TechnicalStack = p.TechnicalStack,
-                ResearchAreaName = p.ResearchArea != null ? p.ResearchArea.Name : "Unknown"
+                ResearchAreaName = p.ResearchArea != null ? p.ResearchArea.Name : "Unknown",
+                Status = p.Status.ToString(),
+                CreatedAt = p.CreatedAt
                 // ⛔ SECURITY: StudentId, StudentName, StudentEmail - NEVER projected
             })
             .ToListAsync();

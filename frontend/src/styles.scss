@@ -1,0 +1,63 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+html {
+	color-scheme: light;
+}
+
+body {
+	margin: 0;
+	font-family: 'Manrope', 'Segoe UI', sans-serif;
+	color: #172034;
+	background:
+		radial-gradient(circle at 85% -20%, rgba(16, 103, 198, 0.12), transparent 36%),
+		radial-gradient(circle at -10% 110%, rgba(228, 112, 36, 0.14), transparent 30%),
+		#f4f7fb;
+}
+
+:root {
+	--accent-blue: #1067c6;
+	--accent-amber: #c27f11;
+	--accent-green: #18804b;
+	--accent-red: #c73a2f;
+	--accent-purple: #7b3fd3;
+	--text-main: #172034;
+	--text-muted: #5e6778;
+	--surface-border: #dbe2ee;
+}
+
+.status-pending {
+	color: var(--accent-amber);
+}
+
+.status-review {
+	color: var(--accent-blue);
+}
+
+.status-matched {
+	color: var(--accent-green);
+}
+
+.status-withdrawn {
+	color: var(--accent-red);
+}
+
+.status-revealed {
+	color: var(--accent-purple);
+}
+
+.toast-success {
+	--mdc-snackbar-container-color: #1f7a49;
+	--mdc-snackbar-supporting-text-color: #ffffff;
+}
+
+.toast-error {
+	--mdc-snackbar-container-color: #b73027;
+	--mdc-snackbar-supporting-text-color: #ffffff;
+}
+
+.toast-info {
+	--mdc-snackbar-container-color: #0f5cae;
+	--mdc-snackbar-supporting-text-color: #ffffff;
+}

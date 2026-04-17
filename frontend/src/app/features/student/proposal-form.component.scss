@@ -1,0 +1,18 @@
+.proposal-form {
+  display: grid;
+  gap: 0.8rem;
+}
+
+mat-card {
+  border-radius: 14px;
+}
+
+button[type='submit'] {
+  justify-self: start;
+}
+
+@media (max-width: 600px) {
+  button[type='submit'] {
+    width: 100%;
+  }
+}

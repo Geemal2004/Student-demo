@@ -1,0 +1,19 @@
+.confirmed-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+mat-card {
+  border-radius: 14px;
+}
+
+h3 {
+  margin-top: 0;
+}
+
+@media (max-width: 960px) {
+  .confirmed-grid {
+    grid-template-columns: 1fr;
+  }
+}

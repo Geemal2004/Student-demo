@@ -1,0 +1,41 @@
+mat-form-field {
+  width: 100%;
+}
+
+.create-card {
+  border-radius: 14px;
+  margin-bottom: 0.8rem;
+}
+
+.create-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.user-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+mat-card {
+  border-radius: 14px;
+}
+
+h3 {
+  margin-top: 0;
+}
+
+.actions {
+  margin-top: 0.6rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 960px) {
+  .create-grid,
+  .user-grid {
+    grid-template-columns: 1fr;
+  }
+}
