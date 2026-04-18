@@ -1,41 +1,74 @@
 <app-page-header
   [title]="editing() ? 'Edit Proposal' : 'Create Proposal'"
   [subtitle]="editing() ? 'Update your proposal before matching proceeds.' : 'Submit your project idea for blind matching.'">
-  <a actions mat-stroked-button routerLink="/student/proposals">Back to proposals</a>
+  <a actions mat-stroked-button class="btn-secondary" routerLink="/student/proposals">Back to proposals</a>
 </app-page-header>
 
 <app-loading-skeleton *ngIf="loading()" [rows]="4"></app-loading-skeleton>
 
-<mat-card *ngIf="!loading()">
-  <form [formGroup]="form" (ngSubmit)="submit()" class="proposal-form">
-    <mat-form-field appearance="outline">
-      <mat-label>Title</mat-label>
-      <input matInput formControlName="title" />
-      <mat-hint align="end">{{ form.controls.title.value.length }}/150</mat-hint>
-    </mat-form-field>
+<section class="form-shell" *ngIf="!loading()">
+  <mat-card class="form-card ui-card">
+    <div class="form-header">
+      <h2>{{ editing() ? 'Refine your proposal' : 'Define your project proposal' }}</h2>
+      <p>
+        Keep the content descriptive and technically focused. Student identity remains hidden until a confirmed match.
+      </p>
+    </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Abstract</mat-label>
-      <textarea matInput rows="6" formControlName="abstract"></textarea>
-      <mat-hint align="end">{{ form.controls.abstract.value.length }}/1000</mat-hint>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Technical stack</mat-label>
-      <input matInput formControlName="technicalStack" />
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Research area</mat-label>
-      <mat-select formControlName="researchAreaId">
-        @for (area of areas(); track area.id) {
-          <mat-option [value]="area.id">{{ area.name }}</mat-option>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="proposal-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title" />
+        <mat-hint align="start">Summarize the project in one clear sentence.</mat-hint>
+        <mat-hint align="end" class="counter">{{ form.controls.title.value.length }}/150</mat-hint>
+        @if (form.controls.title.touched && form.controls.title.hasError('required')) {
+          <mat-error>Title is required.</mat-error>
         }
-      </mat-select>
-    </mat-form-field>
+        @if (form.controls.title.touched && form.controls.title.hasError('minlength')) {
+          <mat-error>Title must be at least 10 characters.</mat-error>
+        }
+      </mat-form-field>
 
-    <button mat-flat-button color="primary" type="submit">
-      {{ editing() ? 'Save changes' : 'Submit proposal' }}
-    </button>
-  </form>
-</mat-card>
+      <mat-form-field appearance="outline">
+        <mat-label>Abstract</mat-label>
+        <textarea matInput rows="7" formControlName="abstract"></textarea>
+        <mat-hint align="start">Describe goals, approach, and expected outcomes.</mat-hint>
+        <mat-hint align="end" class="counter">{{ form.controls.abstract.value.length }}/1000</mat-hint>
+        @if (form.controls.abstract.touched && form.controls.abstract.hasError('required')) {
+          <mat-error>Abstract is required.</mat-error>
+        }
+        @if (form.controls.abstract.touched && form.controls.abstract.hasError('minlength')) {
+          <mat-error>Abstract must be at least 100 characters.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Technical stack</mat-label>
+        <input matInput formControlName="technicalStack" placeholder="Example: Python, TensorFlow, OpenCV" />
+        <mat-hint align="start">Optional, comma-separated technologies.</mat-hint>
+        @if (form.controls.technicalStack.touched && form.controls.technicalStack.hasError('maxlength')) {
+          <mat-error>Technical stack must be at most 200 characters.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Research area</mat-label>
+        <mat-select formControlName="researchAreaId">
+          @for (area of areas(); track area.id) {
+            <mat-option [value]="area.id">{{ area.name }}</mat-option>
+          }
+        </mat-select>
+        @if (form.controls.researchAreaId.touched && form.controls.researchAreaId.hasError('min')) {
+          <mat-error>Select a research area.</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="form-actions">
+        <a mat-stroked-button class="btn-secondary" routerLink="/student/proposals">{{ editing() ? 'Cancel' : 'Back' }}</a>
+        <button mat-flat-button class="btn-primary" type="submit" [disabled]="form.invalid">
+          {{ editing() ? 'Save changes' : 'Submit proposal' }}
+        </button>
+      </div>
+    </form>
+  </mat-card>
+</section>

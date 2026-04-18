@@ -2,7 +2,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { StudentApiService } from '../../core/services/student-api.service';
 import { ProposalDetailsDto } from '../../core/models/api.models';
 import { ToastService } from '../../core/services/toast.service';
@@ -18,8 +18,8 @@ import { StatusBadgeComponent } from '../../shared/ui/status-badge.component';
     CommonModule,
     RouterLink,
     DatePipe,
-    MatCardModule,
     MatButtonModule,
+    MatIconModule,
     PageHeaderComponent,
     RevealCardComponent,
     StatusBadgeComponent,

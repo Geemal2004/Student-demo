@@ -1,15 +1,26 @@
 .confirmed-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.8rem;
+  gap: var(--space-4);
 }
 
-mat-card {
-  border-radius: 14px;
+.confirmed-card {
+  padding: var(--space-4);
+  display: grid;
+  gap: var(--space-2);
+
+  p {
+    color: var(--text-muted);
+  }
+
+  small {
+    margin-top: var(--space-1);
+    color: var(--text-soft);
+  }
 }
 
 h3 {
-  margin-top: 0;
+  margin-top: var(--space-1);
 }
 
 @media (max-width: 960px) {

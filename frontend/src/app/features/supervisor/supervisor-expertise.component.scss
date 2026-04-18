@@ -1,12 +1,14 @@
-mat-card {
+.expertise-card {
   border-radius: 14px;
+  padding: var(--space-5);
   display: grid;
-  gap: 0.9rem;
+  gap: var(--space-4);
 }
 
 .hint {
   margin: 0;
-  color: var(--text-muted);
+  color: var(--text-soft);
+  font-weight: 600;
 }
 
 .actions {
@@ -15,6 +17,10 @@ mat-card {
 }
 
 @media (max-width: 600px) {
+  .expertise-card {
+    padding: var(--space-4);
+  }
+
   .actions {
     justify-content: stretch;
   }

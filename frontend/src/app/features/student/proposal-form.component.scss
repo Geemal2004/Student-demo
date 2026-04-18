@@ -1,18 +1,56 @@
+.form-shell {
+  max-width: 920px;
+}
+
+.form-card {
+  border-radius: 18px;
+  padding: var(--space-5);
+}
+
+.form-header {
+  display: grid;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+
+  p {
+    color: var(--text-muted);
+    max-width: 70ch;
+  }
+}
+
 .proposal-form {
   display: grid;
-  gap: 0.8rem;
+  gap: var(--space-4);
 }
 
-mat-card {
-  border-radius: 14px;
+.counter {
+  color: var(--text-soft);
+  font-weight: 600;
 }
 
-button[type='submit'] {
-  justify-self: start;
+.proposal-form textarea {
+  resize: vertical;
+  min-height: 150px;
 }
 
-@media (max-width: 600px) {
-  button[type='submit'] {
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+@media (max-width: 680px) {
+  .form-card {
+    padding: var(--space-4);
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions a,
+  .form-actions button {
     width: 100%;
   }
 }

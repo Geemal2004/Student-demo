@@ -4,9 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { SupervisorApiService } from '../../core/services/supervisor-api.service';
-import { BlindProposalDto, PagedResult } from '../../core/models/api.models';
+import { BlindProposalDto, PagedResult, ResearchAreaDto } from '../../core/models/api.models';
 import { ToastService } from '../../core/services/toast.service';
 import { EmptyStateComponent } from '../../shared/ui/empty-state.component';
 import { FilterBarComponent } from '../../shared/ui/filter-bar.component';
@@ -23,6 +24,7 @@ import { SearchBoxComponent } from '../../shared/ui/search-box.component';
     FormsModule,
     RouterLink,
     MatButtonModule,
+    MatIconModule,
     MatFormFieldModule,
     MatSelectModule,
     PageHeaderComponent,
@@ -41,17 +43,26 @@ export class SupervisorBrowseComponent {
   private readonly toast = inject(ToastService);
 
   readonly search = signal('');
+  readonly researchArea = signal('');
   readonly sort = signal('newest');
   readonly loading = signal(true);
+  readonly researchAreas = signal<ResearchAreaDto[]>([]);
   readonly results = signal<PagedResult<BlindProposalDto> | null>(null);
 
   constructor() {
+    this.loadResearchAreas();
     this.load();
   }
 
   load(): void {
     this.loading.set(true);
-    this.api.browse({ search: this.search(), sort: this.sort(), page: 1, pageSize: 20 }).subscribe({
+    this.api.browse({
+      search: this.search(),
+      researchArea: this.researchArea(),
+      sort: this.sort(),
+      page: 1,
+      pageSize: 20
+    }).subscribe({
       next: (res) => {
         this.results.set(res);
         this.loading.set(false);
@@ -63,8 +74,23 @@ export class SupervisorBrowseComponent {
     });
   }
 
+  loadResearchAreas(): void {
+    this.api.getResearchAreas().subscribe({
+      next: (areas) => this.researchAreas.set(areas),
+      error: () => {
+        // Non-blocking for browse flow; proposals can still be searched and sorted.
+        this.researchAreas.set([]);
+      }
+    });
+  }
+
   updateSearch(value: string): void {
     this.search.set(value);
+    this.load();
+  }
+
+  updateResearchArea(value: string): void {
+    this.researchArea.set(value);
     this.load();
   }
 

@@ -1,6 +1,19 @@
 <app-page-header title="Browse Blind Proposals" subtitle="Find suitable projects using title, area, and technical stack cues.">
-  <a actions mat-stroked-button routerLink="/supervisor/interests">My interests</a>
+  <a actions mat-stroked-button class="btn-secondary" routerLink="/supervisor/interests">My Interests</a>
 </app-page-header>
+
+<section class="blind-notice ui-card">
+  <div class="blind-notice__icon">
+    <mat-icon>visibility_off</mat-icon>
+  </div>
+  <div>
+    <p class="ui-eyebrow">Blind Review Mode</p>
+    <h3>Student identities are intentionally hidden</h3>
+    <p>
+      Evaluate projects only by proposal quality, technical stack, and research area until formal confirmation occurs.
+    </p>
+  </div>
+</section>
 
 <app-filter-bar>
   <app-search-box
@@ -17,20 +30,33 @@
       <mat-option value="title">Title</mat-option>
     </mat-select>
   </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Research area</mat-label>
+    <mat-select [ngModel]="researchArea()" (ngModelChange)="updateResearchArea($event)">
+      <mat-option value="">All research areas</mat-option>
+      @for (area of researchAreas(); track area.id) {
+        <mat-option [value]="area.name">{{ area.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
 </app-filter-bar>
 
 <app-loading-skeleton *ngIf="loading()" [rows]="4"></app-loading-skeleton>
 
 <section *ngIf="!loading() && (results()?.items?.length ?? 0) > 0" class="card-grid">
+  <p class="result-meta ui-meta">{{ results()?.total ?? 0 }} proposal(s) available for anonymous review.</p>
+
   @for (proposal of results()?.items ?? []; track proposal.id) {
     <app-proposal-card
       [title]="proposal.title"
       [abstract]="proposal.abstract"
       [researchArea]="proposal.researchAreaName"
       [techStack]="proposal.technicalStack ?? ''"
+      [meta]="'Submitted ' + (proposal.createdAt | date: 'mediumDate')"
       [status]="proposal.status">
       <div actions>
-        <button mat-flat-button color="primary" (click)="expressInterest(proposal.id)">Express interest</button>
+        <button mat-flat-button class="btn-primary" (click)="expressInterest(proposal.id)">Express Interest</button>
       </div>
     </app-proposal-card>
   }

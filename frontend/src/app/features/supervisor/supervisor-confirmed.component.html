@@ -1,12 +1,13 @@
 <app-page-header title="Confirmed Matches" subtitle="Identity-revealed matches ready for supervision.">
-  <a actions mat-stroked-button routerLink="/supervisor/interests">Back to interests</a>
+  <a actions mat-stroked-button class="btn-secondary" routerLink="/supervisor/interests">Back to Interests</a>
 </app-page-header>
 
 <app-loading-skeleton *ngIf="loading()" [rows]="4"></app-loading-skeleton>
 
 <section *ngIf="!loading() && confirmed().length > 0" class="confirmed-grid">
   @for (item of confirmed(); track item.matchId) {
-    <mat-card>
+    <mat-card class="confirmed-card">
+      <p class="ui-eyebrow">Confirmed Match</p>
       <h3>{{ item.projectTitle || 'Untitled project' }}</h3>
       <p><strong>Student:</strong> {{ item.studentName || 'Unknown student' }}</p>
       <p><strong>Email:</strong> {{ item.studentEmail || 'Not available' }}</p>
