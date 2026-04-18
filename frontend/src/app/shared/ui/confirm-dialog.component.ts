@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 export interface ConfirmDialogData {
   title: string;
@@ -11,18 +12,24 @@ export interface ConfirmDialogData {
 @Component({
   selector: 'app-confirm-dialog',
   standalone: true,
-  imports: [MatButtonModule],
+  imports: [MatButtonModule, MatIconModule],
   template: `
-    <h2>{{ data.title }}</h2>
-    <p>{{ data.message }}</p>
+    <div class="confirm-dialog">
+      <div class="confirm-dialog__icon">
+        <mat-icon>warning_amber</mat-icon>
+      </div>
+      <div class="confirm-dialog__copy">
+        <h2>{{ data.title }}</h2>
+        <p>{{ data.message }}</p>
+      </div>
+    </div>
+
     <div class="dialog-actions">
-      <button mat-stroked-button (click)="close(false)">Cancel</button>
-      <button mat-flat-button color="warn" (click)="close(true)">{{ data.confirmText || 'Confirm' }}</button>
+      <button mat-stroked-button class="btn-secondary" (click)="close(false)">Cancel</button>
+      <button mat-flat-button class="btn-danger" (click)="close(true)">{{ data.confirmText || 'Confirm' }}</button>
     </div>
   `,
-  styles: [
-    '.dialog-actions{display:flex;justify-content:flex-end;gap:.6rem;margin-top:1rem}'
-  ],
+  styleUrl: './confirm-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConfirmDialogComponent {

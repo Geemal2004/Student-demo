@@ -1,15 +1,47 @@
 .badge {
   display: inline-flex;
+  align-items: center;
   border-radius: 999px;
-  padding: 0.2rem 0.6rem;
-  font-size: 0.76rem;
+  border: 1px solid transparent;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
-.pending { background: #ffefcf; color: var(--accent-amber); }
-.review { background: #d9ebff; color: var(--accent-blue); }
-.matched { background: #d5f5e5; color: var(--accent-green); }
-.withdrawn { background: #ffe0de; color: var(--accent-red); }
-.revealed { background: #eddfff; color: var(--accent-purple); }
-.default { background: #e8ebf2; color: #4d5666; }
+.pending {
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+  border-color: rgba(173, 109, 25, 0.24);
+}
+
+.review {
+  background: var(--status-review-bg);
+  color: var(--status-review-fg);
+  border-color: rgba(31, 99, 215, 0.24);
+}
+
+.matched {
+  background: var(--status-matched-bg);
+  color: var(--status-matched-fg);
+  border-color: rgba(29, 139, 79, 0.24);
+}
+
+.withdrawn {
+  background: var(--status-withdrawn-bg);
+  color: var(--status-withdrawn-fg);
+  border-color: rgba(196, 61, 50, 0.24);
+}
+
+.revealed {
+  background: var(--status-revealed-bg);
+  color: var(--status-revealed-fg);
+  border-color: rgba(128, 81, 205, 0.24);
+}
+
+.default {
+  background: #edf1f8;
+  color: #4f5f79;
+  border-color: #d5ddec;
+}

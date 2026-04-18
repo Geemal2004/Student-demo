@@ -10,20 +10,34 @@ import { RevealDetailsDto } from '../../core/models/api.models';
   imports: [NgIf, DatePipe, MatCardModule, MatIconModule],
   template: `
     <mat-card class="reveal-card" *ngIf="details">
-      <div class="title-row">
-        <mat-icon>celebration</mat-icon>
-        <h3>Match Revealed</h3>
+      <div class="reveal-card__header">
+        <div class="reveal-card__icon">
+          <mat-icon>verified</mat-icon>
+        </div>
+        <div>
+          <p class="ui-eyebrow">Reveal Completed</p>
+          <h3>Supervisor Match Confirmed</h3>
+          <p class="reveal-card__subtitle">Identity is now visible because this blind match was formally confirmed.</p>
+        </div>
       </div>
-      <p><strong>Supervisor:</strong> {{ details.supervisorName }}</p>
-      <p><strong>Email:</strong> {{ details.supervisorEmail }}</p>
-      <p *ngIf="details.confirmedAt"><strong>Confirmed:</strong> {{ details.confirmedAt | date:'medium' }}</p>
+
+      <dl class="reveal-card__grid">
+        <div>
+          <dt>Supervisor</dt>
+          <dd>{{ details.supervisorName }}</dd>
+        </div>
+        <div>
+          <dt>Email</dt>
+          <dd>{{ details.supervisorEmail }}</dd>
+        </div>
+        <div *ngIf="details.confirmedAt">
+          <dt>Confirmed</dt>
+          <dd>{{ details.confirmedAt | date:'medium' }}</dd>
+        </div>
+      </dl>
     </mat-card>
   `,
-  styles: [
-    '.reveal-card{border-radius:14px;border:1px solid #d9c9ff;background:linear-gradient(120deg,#f8f2ff,#ffffff)}',
-    '.title-row{display:flex;align-items:center;gap:.4rem;color:var(--accent-purple)}',
-    'h3{margin:0}'
-  ],
+  styleUrl: './reveal-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RevealCardComponent {

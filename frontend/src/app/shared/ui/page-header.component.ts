@@ -7,22 +7,16 @@ import { NgIf } from '@angular/common';
   imports: [NgIf],
   template: `
     <header class="page-header">
-      <div>
+      <div class="page-header__copy">
         <h1>{{ title }}</h1>
-        <p *ngIf="subtitle">{{ subtitle }}</p>
+        <p *ngIf="subtitle" class="page-header__subtitle">{{ subtitle }}</p>
       </div>
-      <div class="actions">
+      <div class="page-header__actions">
         <ng-content select="[actions]"></ng-content>
       </div>
     </header>
   `,
-  styles: [
-    '.page-header{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:1rem}',
-    'h1{margin:0;font-size:1.5rem}',
-    'p{margin:.25rem 0 0;color:var(--text-muted)}',
-    '.actions{display:flex;gap:.6rem;flex-wrap:wrap}',
-    '@media (max-width: 800px){.page-header{flex-direction:column;align-items:flex-start}}'
-  ],
+  styleUrl: './page-header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PageHeaderComponent {

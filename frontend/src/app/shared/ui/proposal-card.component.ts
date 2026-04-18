@@ -1,35 +1,44 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { NgIf } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { StatusBadgeComponent } from './status-badge.component';
 
 @Component({
   selector: 'app-proposal-card',
   standalone: true,
-  imports: [NgIf, MatCardModule, MatButtonModule, StatusBadgeComponent],
+  imports: [NgFor, NgIf, MatCardModule, MatButtonModule, MatIconModule, StatusBadgeComponent],
   template: `
     <mat-card class="proposal-card">
-      <div class="header">
-        <h3>{{ title }}</h3>
+      <div class="proposal-card__header">
+        <div class="proposal-card__title-wrap">
+          <h3>{{ title }}</h3>
+          <p *ngIf="meta" class="proposal-card__meta">{{ meta }}</p>
+        </div>
         <app-status-badge [status]="status"></app-status-badge>
       </div>
-      <p class="abstract">{{ abstract }}</p>
-      <small>{{ researchArea }}<span *ngIf="techStack"> • {{ techStack }}</span></small>
-      <div class="actions">
+
+      <p class="proposal-card__abstract">{{ abstract }}</p>
+
+      <div class="proposal-card__details">
+        <span class="proposal-card__detail">
+          <mat-icon>category</mat-icon>
+          {{ researchArea }}
+        </span>
+      </div>
+
+      <div class="proposal-card__chips" *ngIf="techChips.length > 0">
+        <span class="proposal-card__chip" *ngFor="let chip of techChips">{{ chip }}</span>
+      </div>
+
+      <div class="proposal-card__actions">
         <ng-content select="[actions]"></ng-content>
-        <button *ngIf="showPrimary" mat-flat-button color="primary" (click)="primaryClick.emit()">{{ primaryLabel }}</button>
+        <button *ngIf="showPrimary" mat-flat-button class="btn-primary" (click)="primaryClick.emit()">{{ primaryLabel }}</button>
       </div>
     </mat-card>
   `,
-  styles: [
-    '.proposal-card{border-radius:14px;display:grid;gap:.6rem}',
-    '.header{display:flex;justify-content:space-between;align-items:flex-start;gap:.6rem}',
-    'h3{margin:0;font-size:1.05rem}',
-    '.abstract{margin:0;color:var(--text-muted)}',
-    'small{color:var(--text-muted)}',
-    '.actions{display:flex;justify-content:flex-end;gap:.6rem;flex-wrap:wrap}'
-  ],
+  styleUrl: './proposal-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProposalCardComponent {
@@ -37,8 +46,21 @@ export class ProposalCardComponent {
   @Input({ required: true }) abstract = '';
   @Input({ required: true }) researchArea = '';
   @Input() techStack = '';
+  @Input() meta = '';
   @Input() status = '';
   @Input() primaryLabel = 'Open';
   @Input() showPrimary = false;
   @Output() primaryClick = new EventEmitter<void>();
+
+  get techChips(): string[] {
+    if (!this.techStack.trim()) {
+      return [];
+    }
+
+    return this.techStack
+      .split(',')
+      .map((value) => value.trim())
+      .filter((value) => value.length > 0)
+      .slice(0, 6);
+  }
 }

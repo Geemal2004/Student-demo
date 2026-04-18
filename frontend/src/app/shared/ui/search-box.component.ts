@@ -12,10 +12,10 @@ import { MatInputModule } from '@angular/material/input';
     <mat-form-field appearance="outline" class="search-box">
       <mat-label>{{ label }}</mat-label>
       <mat-icon matPrefix>search</mat-icon>
-      <input matInput [placeholder]="placeholder" [ngModel]="value" (ngModelChange)="valueChange.emit($event)" />
+      <input matInput [placeholder]="placeholder" [ngModel]="value" (ngModelChange)="valueChange.emit($event)" autocomplete="off" />
     </mat-form-field>
   `,
-  styles: ['.search-box{width:100%}'],
+  styleUrl: './search-box.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchBoxComponent {

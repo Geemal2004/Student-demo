@@ -1,0 +1,56 @@
+.reveal-card {
+  border: 1px solid #d9c8fb;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(140deg, #f6f0ff 0%, #ffffff 55%);
+  padding: var(--space-5);
+  display: grid;
+  gap: var(--space-5);
+}
+
+.reveal-card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.reveal-card__icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--status-revealed-fg);
+  background: rgba(128, 81, 205, 0.15);
+  border: 1px solid rgba(128, 81, 205, 0.24);
+}
+
+.reveal-card__subtitle {
+  margin-top: var(--space-2);
+  color: #604c87;
+}
+
+.reveal-card__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+}
+
+.reveal-card__grid div {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.reveal-card__grid dt {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6f5a95;
+}
+
+.reveal-card__grid dd {
+  margin: 0;
+  font-weight: 600;
+  color: #30224c;
+}
