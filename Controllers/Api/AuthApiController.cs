@@ -85,4 +85,27 @@ public class AuthApiController : ApiControllerBase
 
         return Ok(user);
     }
+
+    [Authorize]
+    [HttpPut("profile-picture")]
+    public async Task<IActionResult> UpdateProfilePicture([FromBody] UpdateProfileImageRequestDto request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+
+        if (!Uri.TryCreate(request.ProfileImageUrl, UriKind.Absolute, out var uri) || !string.Equals(uri.Host, "res.cloudinary.com", StringComparison.OrdinalIgnoreCase) || !uri.AbsolutePath.Contains("/dy3jmad0j/", StringComparison.OrdinalIgnoreCase))
+        {
+            return BadRequest(new ApiErrorDto { Message = "Profile picture URL must be a valid Cloudinary image URL." });
+        }
+
+        var updatedUser = await _authService.UpdateProfileImageAsync(GetCurrentUserId(), request.ProfileImageUrl);
+        if (updatedUser == null)
+        {
+            return NotFound(new ApiErrorDto { Message = "User not found." });
+        }
+
+        return Ok(updatedUser);
+    }
 }

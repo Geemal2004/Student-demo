@@ -44,6 +44,7 @@ export class ShellComponent {
     if (role === 'Student') {
       return [
         { label: 'Dashboard', link: '/student', icon: 'dashboard', exact: true },
+        { label: 'My Profile', link: '/student/profile', icon: 'person' },
         { label: 'My Proposals', link: '/student/proposals', icon: 'description' },
         { label: 'Create Proposal', link: '/student/create', icon: 'add_circle' }
       ];
@@ -52,6 +53,7 @@ export class ShellComponent {
     if (role === 'Supervisor') {
       return [
         { label: 'Dashboard', link: '/supervisor', icon: 'dashboard', exact: true },
+        { label: 'My Profile', link: '/supervisor/profile', icon: 'person' },
         { label: 'Browse Blind Proposals', link: '/supervisor/browse', icon: 'travel_explore' },
         { label: 'My Interests', link: '/supervisor/interests', icon: 'favorite' },
         { label: 'Confirmed Matches', link: '/supervisor/confirmed', icon: 'verified' },
@@ -62,6 +64,7 @@ export class ShellComponent {
     if (role === 'ModuleLeader') {
       return [
         { label: 'Dashboard', link: '/module-leader', icon: 'dashboard', exact: true },
+        { label: 'My Profile', link: '/module-leader/profile', icon: 'person' },
         { label: 'Match Oversight', link: '/module-leader/matches', icon: 'account_tree' },
         { label: 'Research Areas', link: '/module-leader/research-areas', icon: 'hub' },
         { label: 'User Directory', link: '/module-leader/users', icon: 'group' }
@@ -71,6 +74,7 @@ export class ShellComponent {
     if (role === 'SysAdmin') {
       return [
         { label: 'Dashboard', link: '/admin', icon: 'dashboard', exact: true },
+        { label: 'My Profile', link: '/admin/profile', icon: 'person' },
         { label: 'Users', link: '/admin/users', icon: 'manage_accounts' },
         { label: 'Migrations', link: '/admin/migrations', icon: 'build' },
         { label: 'Audit Logs', link: '/admin/audit-logs', icon: 'history' }
@@ -96,5 +100,17 @@ export class ShellComponent {
     }
 
     void this.router.navigate(['/']);
+  }
+
+  userInitials(fullName: string): string {
+    const name = fullName?.trim();
+    if (!name) {
+      return 'U';
+    }
+
+    const parts = name.split(/\s+/).filter(Boolean);
+    const first = parts[0]?.[0] ?? '';
+    const second = parts.length > 1 ? parts[parts.length - 1]?.[0] ?? '' : '';
+    return `${first}${second}`.toUpperCase();
   }
 }

@@ -37,3 +37,11 @@ public class RegisterRequestDto
     [RegularExpression("^(Student|Supervisor)$", ErrorMessage = "Only Student or Supervisor can self-register.")]
     public string Role { get; set; } = "Student";
 }
+
+public class UpdateProfileImageRequestDto
+{
+    [Required]
+    [Url]
+    [MaxLength(500)]
+    public string ProfileImageUrl { get; set; } = string.Empty;
+}

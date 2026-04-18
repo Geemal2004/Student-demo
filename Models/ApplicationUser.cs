@@ -9,6 +9,9 @@ public class ApplicationUser : IdentityUser
     [MaxLength(100)]
     public string FullName { get; set; } = string.Empty;
 
+    [MaxLength(500)]
+    public string? ProfileImageUrl { get; set; }
+
     // NOTE: Role is NO LONGER stored here. Use ASP.NET Identity roles via UserManager.GetRolesAsync()
     // This ensures role consistency with the Identity system
 

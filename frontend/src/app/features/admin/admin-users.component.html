@@ -58,12 +58,12 @@
 
 <section *ngIf="!loading() && filteredUsers().length > 0" class="user-grid">
   @for (user of filteredUsers(); track user.id) {
-    <mat-card>
+    <mat-card class="user-card">
       <h3>{{ user.fullName }}</h3>
       <p>{{ user.email }}</p>
       <small>{{ user.role }} • {{ user.isActive ? 'Active' : 'Inactive' }}</small>
-      <div class="actions">
-        <button mat-button color="warn" type="button" *ngIf="user.isActive" (click)="deactivateUser(user.id)">Deactivate</button>
+      <div class="actions" *ngIf="user.isActive">
+        <button mat-button color="warn" type="button" (click)="deactivateUser(user.id)">Deactivate</button>
       </div>
     </mat-card>
   }

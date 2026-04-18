@@ -5,6 +5,7 @@ mat-form-field {
 .create-card {
   border-radius: 14px;
   margin-bottom: 0.8rem;
+  padding: var(--space-5);
 }
 
 .create-grid {
@@ -17,10 +18,26 @@ mat-form-field {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.8rem;
+  align-items: start;
 }
 
-mat-card {
+.user-card {
   border-radius: 14px;
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.user-card p {
+  color: var(--text-main);
+  word-break: break-word;
+}
+
+.user-card small {
+  display: block;
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
 h3 {
@@ -28,7 +45,7 @@ h3 {
 }
 
 .actions {
-  margin-top: 0.6rem;
+  margin-top: var(--space-3);
   display: flex;
   justify-content: flex-end;
 }

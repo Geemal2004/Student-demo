@@ -48,9 +48,16 @@ export class AuthService {
   getProfile(): Observable<AuthUser | null> {
     return this.http.get<AuthUser>(`${API_BASE_URL}${API_ENDPOINTS.auth.me}`).pipe(
       tap((user) => {
-        this.userState.set(user);
-        localStorage.setItem(USER_KEY, JSON.stringify(user));
+        this.persistUser(user);
       }),
+      map((user) => user),
+      catchError(() => of(null))
+    );
+  }
+
+  updateProfilePicture(profileImageUrl: string): Observable<AuthUser | null> {
+    return this.http.put<AuthUser>(`${API_BASE_URL}${API_ENDPOINTS.auth.profilePicture}`, { profileImageUrl }).pipe(
+      tap((user) => this.persistUser(user)),
       map((user) => user),
       catchError(() => of(null))
     );
@@ -90,8 +97,12 @@ export class AuthService {
     }
 
     localStorage.setItem(TOKEN_KEY, response.token);
-    localStorage.setItem(USER_KEY, JSON.stringify(response.user));
-    this.userState.set(response.user);
+    this.persistUser(response.user);
+  }
+
+  private persistUser(user: AuthUser): void {
+    this.userState.set(user);
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
   }
 
   private loadUser(): AuthUser | null {

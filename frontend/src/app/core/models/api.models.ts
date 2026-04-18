@@ -6,6 +6,7 @@ export interface AuthUser {
   email: string;
   fullName: string;
   role: AppRole;
+  profileImageUrl?: string | null;
 }
 
 export interface AuthResponse {

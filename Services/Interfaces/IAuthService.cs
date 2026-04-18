@@ -7,6 +7,7 @@ public interface IAuthService
     Task<AuthResultDto> RegisterAsync(RegisterDto model);
     Task<AuthResultDto> LoginAsync(LoginDto model);
     Task<UserDto?> GetCurrentUserAsync(string userId);
+    Task<UserDto?> UpdateProfileImageAsync(string userId, string profileImageUrl);
 }
 
 public class AuthResultDto
@@ -39,4 +40,5 @@ public class UserDto
     public string Email { get; set; } = string.Empty;
     public string FullName { get; set; } = string.Empty;
     public string Role { get; set; } = string.Empty;
+    public string? ProfileImageUrl { get; set; }
 }

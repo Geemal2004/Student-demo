@@ -25,12 +25,16 @@
 
 <section *ngIf="!loading() && matches().length > 0" class="match-grid">
   @for (item of matches(); track item.matchId) {
-    <mat-card>
-      <h3>{{ item.projectTitle }}</h3>
-      <p><strong>Student:</strong> {{ item.studentName }} ({{ item.studentEmail }})</p>
-      <p><strong>Supervisor:</strong> {{ item.supervisorName }} ({{ item.supervisorEmail }})</p>
-      <p><strong>Research area:</strong> {{ item.researchArea }}</p>
-      <small *ngIf="item.confirmedAt">Confirmed {{ item.confirmedAt | date:'medium' }}</small>
+    <mat-card class="match-card">
+      <h3 class="match-card__title">{{ item.projectTitle }}</h3>
+
+      <div class="match-card__meta">
+        <p class="match-card__line"><strong>Student:</strong> {{ item.studentName }} ({{ item.studentEmail }})</p>
+        <p class="match-card__line"><strong>Supervisor:</strong> {{ item.supervisorName }} ({{ item.supervisorEmail }})</p>
+        <p class="match-card__line"><strong>Research area:</strong> {{ item.researchArea }}</p>
+      </div>
+
+      <small *ngIf="item.confirmedAt" class="match-card__confirmed">Confirmed {{ item.confirmedAt | date:'medium' }}</small>
 
       <div class="reassign-row">
         <mat-form-field appearance="outline">

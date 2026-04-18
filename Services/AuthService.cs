@@ -79,7 +79,8 @@ public class AuthService : IAuthService
                 Id = user.Id,
                 Email = user.Email!,
                 FullName = user.FullName,
-                Role = model.Role
+                Role = model.Role,
+                ProfileImageUrl = user.ProfileImageUrl
             }
         };
     }
@@ -119,7 +120,8 @@ public class AuthService : IAuthService
                 Id = user.Id,
                 Email = user.Email!,
                 FullName = user.FullName,
-                Role = roles.FirstOrDefault() ?? "Unknown"
+                Role = roles.FirstOrDefault() ?? "Unknown",
+                ProfileImageUrl = user.ProfileImageUrl
             }
         };
     }
@@ -127,8 +129,35 @@ public class AuthService : IAuthService
     public async Task<UserDto?> GetCurrentUserAsync(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
-        if (user == null) return null;
+        if (user == null)
+        {
+            return null;
+        }
 
+        return await ToUserDtoAsync(user);
+    }
+
+    public async Task<UserDto?> UpdateProfileImageAsync(string userId, string profileImageUrl)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return null;
+        }
+
+        user.ProfileImageUrl = profileImageUrl.Trim();
+
+        var updateResult = await _userManager.UpdateAsync(user);
+        if (!updateResult.Succeeded)
+        {
+            return null;
+        }
+
+        return await ToUserDtoAsync(user);
+    }
+
+    private async Task<UserDto> ToUserDtoAsync(ApplicationUser user)
+    {
         var roles = await _userManager.GetRolesAsync(user);
 
         return new UserDto
@@ -136,7 +165,8 @@ public class AuthService : IAuthService
             Id = user.Id,
             Email = user.Email!,
             FullName = user.FullName,
-            Role = roles.FirstOrDefault() ?? "Unknown"
+            Role = roles.FirstOrDefault() ?? "Unknown",
+            ProfileImageUrl = user.ProfileImageUrl
         };
     }
 

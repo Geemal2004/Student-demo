@@ -16,7 +16,7 @@
             [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
             (click)="closeOnMobile(drawer)">
             <mat-icon>{{ item.icon }}</mat-icon>
-            <span>{{ item.label }}</span>
+            <span class="nav-link__label">{{ item.label }}</span>
           </a>
         }
       </nav>
@@ -42,8 +42,14 @@
       <span class="toolbar-spacer"></span>
 
       <div class="toolbar-user" *ngIf="user() as currentUser">
-        <span class="toolbar-user__name">{{ currentUser.fullName }}</span>
-        <span class="toolbar-user__role">{{ currentUser.role }}</span>
+        <div class="toolbar-user__avatar" [class.toolbar-user__avatar--image]="!!currentUser.profileImageUrl">
+          <img *ngIf="currentUser.profileImageUrl as imageUrl; else toolbarInitials" [src]="imageUrl" [alt]="currentUser.fullName + ' profile picture'" />
+          <ng-template #toolbarInitials>{{ userInitials(currentUser.fullName) }}</ng-template>
+        </div>
+        <div class="toolbar-user__details">
+          <span class="toolbar-user__name">{{ currentUser.fullName }}</span>
+          <span class="toolbar-user__role">{{ currentUser.role }}</span>
+        </div>
       </div>
 
       <button mat-stroked-button class="btn-secondary" (click)="logout()">Logout</button>

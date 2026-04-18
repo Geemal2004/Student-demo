@@ -3,8 +3,8 @@
   border: 1px solid var(--surface-border);
   border-radius: 16px;
   padding: 1rem 1rem 1.05rem;
-  background: #ffffff;
-  box-shadow: var(--shadow-sm);
+  background: linear-gradient(180deg, #ffffff 0%, #f1faf5 100%);
+  box-shadow: 0 10px 24px rgba(15, 62, 123, 0.08);
   overflow: hidden;
 }
 
@@ -13,7 +13,7 @@
   position: absolute;
   inset: 0 0 auto;
   height: 3px;
-  background: #a9b7cf;
+  background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-green) 100%);
 }
 
 .label {
