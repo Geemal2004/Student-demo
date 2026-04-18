@@ -19,7 +19,7 @@ import { StatusBadgeComponent } from './status-badge.component';
         <app-status-badge [status]="status"></app-status-badge>
       </div>
 
-      <p class="proposal-card__abstract">{{ abstract }}</p>
+      <p class="proposal-card__abstract" [class.proposal-card__abstract--expanded]="showFullDetails">{{ abstract }}</p>
 
       <div class="proposal-card__details">
         <span class="proposal-card__detail">
@@ -50,6 +50,7 @@ export class ProposalCardComponent {
   @Input() status = '';
   @Input() primaryLabel = 'Open';
   @Input() showPrimary = false;
+  @Input() showFullDetails = false;
   @Output() primaryClick = new EventEmitter<void>();
 
   get techChips(): string[] {
@@ -61,6 +62,6 @@ export class ProposalCardComponent {
       .split(',')
       .map((value) => value.trim())
       .filter((value) => value.length > 0)
-      .slice(0, 6);
+      .slice(0, this.showFullDetails ? Number.MAX_SAFE_INTEGER : 6);
   }
 }

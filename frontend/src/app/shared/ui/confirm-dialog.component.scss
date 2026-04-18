@@ -13,7 +13,7 @@
   place-items: center;
   color: var(--accent-red);
   background: var(--status-withdrawn-bg);
-  border: 1px solid rgba(196, 61, 50, 0.24);
+  border: 1px solid color-mix(in srgb, var(--accent-red) 24%, #ffffff);
 }
 
 .confirm-dialog__copy h2 {

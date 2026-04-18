@@ -67,6 +67,12 @@ public class SupervisorApiController : ApiControllerBase
                 ProposalId = c.ProposalId,
                 StudentName = c.Proposal?.Student?.FullName ?? string.Empty,
                 StudentEmail = c.Proposal?.Student?.Email ?? string.Empty,
+                IsGroupProject = c.Proposal?.ProjectGroupId.HasValue == true,
+                ProjectGroupName = c.Proposal?.ProjectGroup?.Name,
+                GroupMembers = c.Proposal?.ProjectGroup?.Members
+                    .OrderBy(m => m.Student?.FullName ?? string.Empty)
+                    .Select(m => m.Student?.FullName ?? "Unknown Student")
+                    .ToList() ?? new List<string>(),
                 ProjectTitle = c.Proposal?.Title ?? string.Empty,
                 ConfirmedAt = c.ConfirmedAt
             }).ToList()
@@ -194,6 +200,12 @@ public class SupervisorApiController : ApiControllerBase
                 ProposalId = c.ProposalId,
                 StudentName = c.Proposal?.Student?.FullName ?? string.Empty,
                 StudentEmail = c.Proposal?.Student?.Email ?? string.Empty,
+                IsGroupProject = c.Proposal?.ProjectGroupId.HasValue == true,
+                ProjectGroupName = c.Proposal?.ProjectGroup?.Name,
+                GroupMembers = c.Proposal?.ProjectGroup?.Members
+                    .OrderBy(m => m.Student?.FullName ?? string.Empty)
+                    .Select(m => m.Student?.FullName ?? "Unknown Student")
+                    .ToList() ?? new List<string>(),
                 ProjectTitle = c.Proposal?.Title ?? string.Empty,
                 ConfirmedAt = c.ConfirmedAt
             }).ToList()

@@ -45,9 +45,9 @@
   display: inline-flex;
   align-items: center;
   border-radius: 999px;
-  border: 1px solid #cee0ff;
-  background: #edf4ff;
-  color: #2d4f88;
+  border: 1px solid color-mix(in srgb, var(--color-brand-blue) 26%, #ffffff);
+  background: color-mix(in srgb, var(--color-brand-blue) 10%, #ffffff);
+  color: var(--bg-contrast);
   font-size: 0.8rem;
   font-weight: 600;
   padding: 0.3rem 0.72rem;

@@ -17,4 +17,6 @@ public class ApplicationUser : IdentityUser
 
     public ICollection<SupervisorExpertise> ExpertiseTags { get; set; } = new List<SupervisorExpertise>();
     public ICollection<ProjectProposal> Proposals { get; set; } = new List<ProjectProposal>();
+    public ICollection<ProjectGroupMember> ProjectGroupMemberships { get; set; } = new List<ProjectGroupMember>();
+    public ICollection<ProjectGroup> LedProjectGroups { get; set; } = new List<ProjectGroup>();
 }

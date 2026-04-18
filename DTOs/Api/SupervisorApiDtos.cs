@@ -29,6 +29,9 @@ public class SupervisorConfirmedMatchDto
     public int ProposalId { get; set; }
     public string StudentName { get; set; } = string.Empty;
     public string StudentEmail { get; set; } = string.Empty;
+    public bool IsGroupProject { get; set; }
+    public string? ProjectGroupName { get; set; }
+    public List<string> GroupMembers { get; set; } = new();
     public string ProjectTitle { get; set; } = string.Empty;
     public DateTime? ConfirmedAt { get; set; }
 }

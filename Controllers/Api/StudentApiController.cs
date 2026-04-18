@@ -78,7 +78,9 @@ public class StudentApiController : ApiControllerBase
                 Title = request.Title,
                 Abstract = request.Abstract,
                 TechnicalStack = request.TechnicalStack,
-                ResearchAreaId = request.ResearchAreaId
+                ProposalDocumentUrl = request.ProposalDocumentUrl,
+                ResearchAreaId = request.ResearchAreaId,
+                ProjectGroupId = request.ProjectGroupId
             };
 
             var created = await _proposalService.CreateProposalAsync(proposal, GetCurrentUserId());
@@ -91,6 +93,10 @@ public class StudentApiController : ApiControllerBase
         catch (InvalidOperationException ex)
         {
             return BadRequest(new ApiErrorDto { Message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new ApiErrorDto { Message = ex.Message });
         }
     }
 
@@ -110,7 +116,9 @@ public class StudentApiController : ApiControllerBase
                 Title = request.Title,
                 Abstract = request.Abstract,
                 TechnicalStack = request.TechnicalStack,
-                ResearchAreaId = request.ResearchAreaId
+                ProposalDocumentUrl = request.ProposalDocumentUrl,
+                ResearchAreaId = request.ResearchAreaId,
+                ProjectGroupId = request.ProjectGroupId
             };
 
             var updated = await _proposalService.UpdateProposalAsync(proposal, GetCurrentUserId());
@@ -165,5 +173,46 @@ public class StudentApiController : ApiControllerBase
         });
 
         return Ok(dto);
+    }
+
+    [HttpGet("groups")]
+    public async Task<ActionResult<IEnumerable<ProjectGroupDto>>> GetGroups()
+    {
+        var groups = await _proposalService.GetProjectGroupsForStudentAsync(GetCurrentUserId());
+        return Ok(groups);
+    }
+
+    [HttpPost("groups")]
+    public async Task<ActionResult<ProjectGroupDto>> CreateGroup([FromBody] CreateProjectGroupRequestDto request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+
+        try
+        {
+            var created = await _proposalService.CreateProjectGroupAsync(
+                GetCurrentUserId(),
+                request.Name,
+                request.MemberStudentIds);
+
+            return CreatedAtAction(nameof(GetGroups), new { id = created.Id }, created);
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(new ApiErrorDto { Message = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new ApiErrorDto { Message = ex.Message });
+        }
+    }
+
+    [HttpGet("peers")]
+    public async Task<ActionResult<IEnumerable<StudentPeerDto>>> GetPeers()
+    {
+        var peers = await _proposalService.GetStudentPeersAsync(GetCurrentUserId());
+        return Ok(peers);
     }
 }

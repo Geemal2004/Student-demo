@@ -1,18 +1,25 @@
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.8rem;
-  margin-bottom: 0.8rem;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
 }
 
 .quick-actions {
   border-radius: 14px;
+  padding: var(--space-4) var(--space-5);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.quick-actions h3 {
+  margin: 0;
 }
 
 .action-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: var(--space-3);
 }
 
 @media (max-width: 600px) {

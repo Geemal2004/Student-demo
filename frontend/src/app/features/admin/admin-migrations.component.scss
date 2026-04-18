@@ -1,5 +1,6 @@
 mat-card {
   border-radius: 14px;
+  padding: var(--space-5);
 }
 
 h3 {
@@ -11,4 +12,5 @@ ol {
   padding-left: 1.2rem;
   display: grid;
   gap: 0.35rem;
+  color: var(--text-muted);
 }

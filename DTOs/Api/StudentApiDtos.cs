@@ -26,6 +26,22 @@ public class ProposalUpsertDto
     [StringLength(200)]
     public string? TechnicalStack { get; set; }
 
+    [StringLength(500)]
+    public string? ProposalDocumentUrl { get; set; }
+
     [Required]
     public int ResearchAreaId { get; set; }
+
+    public int? ProjectGroupId { get; set; }
+}
+
+public class CreateProjectGroupRequestDto
+{
+    [Required]
+    [StringLength(100, MinimumLength = 3)]
+    public string Name { get; set; } = string.Empty;
+
+    [Required]
+    [MinLength(1)]
+    public List<string> MemberStudentIds { get; set; } = new();
 }

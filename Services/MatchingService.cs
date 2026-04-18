@@ -164,6 +164,10 @@ public class MatchingService : IMatchingService
         return await _context.SupervisorMatches
             .Include(m => m.Proposal)
             .ThenInclude(p => p!.Student)
+            .Include(m => m.Proposal)
+            .ThenInclude(p => p!.ProjectGroup)
+            .ThenInclude(g => g!.Members)
+            .ThenInclude(member => member.Student)
             .Where(m => m.SupervisorId == supervisorId && m.IsConfirmed)
             .OrderByDescending(m => m.ConfirmedAt)
             .ToListAsync();

@@ -9,8 +9,18 @@
     <mat-card class="confirmed-card">
       <p class="ui-eyebrow">Confirmed Match</p>
       <h3>{{ item.projectTitle || 'Untitled project' }}</h3>
-      <p><strong>Student:</strong> {{ item.studentName || 'Unknown student' }}</p>
-      <p><strong>Email:</strong> {{ item.studentEmail || 'Not available' }}</p>
+
+      @if (item.isGroupProject) {
+        <p><strong>Project type:</strong> Group project</p>
+        <p><strong>Group:</strong> {{ item.projectGroupName || 'Unnamed group' }}</p>
+        <p><strong>Group members:</strong> {{ (item.groupMembers && item.groupMembers.length > 0) ? item.groupMembers.join(', ') : (item.studentName || 'Unknown student') }}</p>
+        <p><strong>Leader contact:</strong> {{ item.studentName || 'Unknown student' }} ({{ item.studentEmail || 'Not available' }})</p>
+      } @else {
+        <p><strong>Project type:</strong> Individual project</p>
+        <p><strong>Student:</strong> {{ item.studentName || 'Unknown student' }}</p>
+        <p><strong>Email:</strong> {{ item.studentEmail || 'Not available' }}</p>
+      }
+
       <small *ngIf="item.confirmedAt">Confirmed {{ item.confirmedAt | date:'medium' }}</small>
     </mat-card>
   }

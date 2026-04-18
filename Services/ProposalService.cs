@@ -22,15 +22,7 @@ public class ProposalService : IProposalService
 
     public async Task<ProjectProposal> CreateProposalAsync(ProjectProposal proposal, string studentId)
     {
-        if (string.IsNullOrWhiteSpace(proposal.Title) || proposal.Title.Length < 10 || proposal.Title.Length > 150)
-        {
-            throw new ValidationException("Title must be between 10 and 150 characters.");
-        }
-
-        if (string.IsNullOrWhiteSpace(proposal.Abstract) || proposal.Abstract.Length < 100 || proposal.Abstract.Length > 1000)
-        {
-            throw new ValidationException("Abstract must be between 100 and 1000 characters.");
-        }
+        ValidateProposalContent(proposal);
 
         var user = await _userManager.FindByIdAsync(studentId);
         if (user == null)
@@ -50,7 +42,43 @@ public class ProposalService : IProposalService
             throw new InvalidOperationException("Invalid research area.");
         }
 
-        proposal.StudentId = studentId;
+        if (proposal.ProjectGroupId.HasValue)
+        {
+            var group = await _context.ProjectGroups
+                .Include(g => g.Members)
+                .FirstOrDefaultAsync(g => g.Id == proposal.ProjectGroupId.Value);
+
+            if (group == null)
+            {
+                throw new InvalidOperationException("Selected group was not found.");
+            }
+
+            if (!group.Members.Any(m => m.StudentId == studentId))
+            {
+                throw new UnauthorizedAccessException("You can only submit proposals for groups you belong to.");
+            }
+
+            if (group.LeaderId != studentId)
+            {
+                throw new InvalidOperationException("Only the group leader can submit a group proposal.");
+            }
+
+            var hasActiveGroupProposal = await _context.Proposals
+                .AnyAsync(p => p.ProjectGroupId == group.Id && p.Status != ProposalStatus.Withdrawn);
+
+            if (hasActiveGroupProposal)
+            {
+                throw new InvalidOperationException("This group already has an active proposal.");
+            }
+
+            proposal.StudentId = group.LeaderId;
+            proposal.ProjectGroupId = group.Id;
+        }
+        else
+        {
+            proposal.StudentId = studentId;
+        }
+
         proposal.Status = ProposalStatus.Pending;
         proposal.IsAnonymous = true;
         proposal.CreatedAt = DateTime.UtcNow;
@@ -67,7 +95,11 @@ public class ProposalService : IProposalService
         var proposals = await _context.Proposals
             .Include(p => p.ResearchArea)
             .Include(p => p.SupervisorMatches)
-            .Where(p => p.StudentId == studentId)
+            .Include(p => p.ProjectGroup)
+                .ThenInclude(g => g!.Members)
+                    .ThenInclude(m => m.Student)
+            .Where(p => p.StudentId == studentId ||
+                        (p.ProjectGroupId.HasValue && p.ProjectGroup != null && p.ProjectGroup.Members.Any(m => m.StudentId == studentId)))
             .OrderByDescending(p => p.CreatedAt)
             .ToListAsync();
 
@@ -80,9 +112,18 @@ public class ProposalService : IProposalService
                 Title = p.Title,
                 Abstract = p.Abstract,
                 TechnicalStack = p.TechnicalStack,
+                ProposalDocumentUrl = p.ProposalDocumentUrl,
                 ResearchAreaName = p.ResearchArea?.Name ?? "",
                 Status = p.Status.ToString(),
-                CreatedAt = p.CreatedAt
+                CreatedAt = p.CreatedAt,
+                IsGroupProject = p.ProjectGroupId.HasValue,
+                ProjectGroupId = p.ProjectGroupId,
+                ProjectGroupName = p.ProjectGroup?.Name,
+                GroupMembers = p.ProjectGroup?.Members
+                    .OrderBy(m => m.Student?.FullName ?? string.Empty)
+                    .Select(m => m.Student?.FullName ?? "Unknown Student")
+                    .ToList() ?? new List<string>(),
+                CanManage = p.StudentId == studentId
             };
 
             // If matched, get revealed supervisor info
@@ -120,6 +161,11 @@ public class ProposalService : IProposalService
 
         if (existing.StudentId != studentId)
         {
+            if (existing.ProjectGroupId.HasValue)
+            {
+                throw new UnauthorizedAccessException("Only the group leader can edit group proposals.");
+            }
+
             throw new UnauthorizedAccessException("You can only edit your own proposals.");
         }
 
@@ -128,19 +174,17 @@ public class ProposalService : IProposalService
             throw new InvalidOperationException("Only pending proposals can be edited.");
         }
 
-        if (string.IsNullOrWhiteSpace(proposal.Title) || proposal.Title.Length < 10 || proposal.Title.Length > 150)
-        {
-            throw new ValidationException("Title must be between 10 and 150 characters.");
-        }
+        ValidateProposalContent(proposal);
 
-        if (string.IsNullOrWhiteSpace(proposal.Abstract) || proposal.Abstract.Length < 100 || proposal.Abstract.Length > 1000)
+        if (proposal.ProjectGroupId.HasValue && proposal.ProjectGroupId != existing.ProjectGroupId)
         {
-            throw new ValidationException("Abstract must be between 100 and 1000 characters.");
+            throw new InvalidOperationException("Group selection cannot be changed after proposal submission.");
         }
 
         existing.Title = proposal.Title;
         existing.Abstract = proposal.Abstract;
         existing.TechnicalStack = proposal.TechnicalStack;
+        existing.ProposalDocumentUrl = proposal.ProposalDocumentUrl;
         existing.ResearchAreaId = proposal.ResearchAreaId;
         existing.UpdatedAt = DateTime.UtcNow;
 
@@ -158,6 +202,11 @@ public class ProposalService : IProposalService
 
         if (proposal.StudentId != studentId)
         {
+            if (proposal.ProjectGroupId.HasValue)
+            {
+                throw new UnauthorizedAccessException("Only the group leader can withdraw group proposals.");
+            }
+
             throw new UnauthorizedAccessException("You can only withdraw your own proposals.");
         }
 
@@ -201,6 +250,7 @@ public class ProposalService : IProposalService
                 Title = p.Title,
                 Abstract = p.Abstract,
                 TechnicalStack = p.TechnicalStack,
+                ProposalDocumentUrl = p.ProposalDocumentUrl,
                 ResearchAreaName = p.ResearchArea != null ? p.ResearchArea.Name : "Unknown",
                 Status = p.Status.ToString(),
                 CreatedAt = p.CreatedAt
@@ -209,6 +259,179 @@ public class ProposalService : IProposalService
             .ToListAsync();
 
         return proposals;
+    }
+
+    public async Task<ProjectGroupDto> CreateProjectGroupAsync(string leaderId, string name, IEnumerable<string> memberStudentIds)
+    {
+        var normalizedName = (name ?? string.Empty).Trim();
+        if (normalizedName.Length is < 3 or > 100)
+        {
+            throw new ValidationException("Group name must be between 3 and 100 characters.");
+        }
+
+        var leader = await _userManager.FindByIdAsync(leaderId);
+        if (leader == null)
+        {
+            throw new InvalidOperationException("Leader student account was not found.");
+        }
+
+        var leaderRoles = await _userManager.GetRolesAsync(leader);
+        if (!leaderRoles.Contains("Student"))
+        {
+            throw new InvalidOperationException("Only students can create project groups.");
+        }
+
+        var requestedMemberIds = memberStudentIds
+            .Select(id => id.Trim())
+            .Where(id => !string.IsNullOrWhiteSpace(id))
+            .Where(id => id != leaderId)
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
+
+        if (requestedMemberIds.Count == 0)
+        {
+            throw new ValidationException("A group must include at least one additional student.");
+        }
+
+        var requestedMembers = await _context.Users
+            .Where(u => requestedMemberIds.Contains(u.Id))
+            .ToListAsync();
+
+        if (requestedMembers.Count != requestedMemberIds.Count)
+        {
+            throw new InvalidOperationException("One or more selected students were not found.");
+        }
+
+        foreach (var member in requestedMembers)
+        {
+            if (!await _userManager.IsInRoleAsync(member, "Student"))
+            {
+                throw new InvalidOperationException("Groups can only include student accounts.");
+            }
+        }
+
+        var group = new ProjectGroup
+        {
+            Name = normalizedName,
+            LeaderId = leaderId,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        group.Members.Add(new ProjectGroupMember
+        {
+            StudentId = leaderId,
+            JoinedAt = DateTime.UtcNow
+        });
+
+        foreach (var memberId in requestedMemberIds)
+        {
+            group.Members.Add(new ProjectGroupMember
+            {
+                StudentId = memberId,
+                JoinedAt = DateTime.UtcNow
+            });
+        }
+
+        _context.ProjectGroups.Add(group);
+        await _context.SaveChangesAsync();
+
+        var persistedGroup = await _context.ProjectGroups
+            .Include(g => g.Leader)
+            .Include(g => g.Members)
+                .ThenInclude(m => m.Student)
+            .SingleAsync(g => g.Id == group.Id);
+
+        return MapGroupDto(persistedGroup);
+    }
+
+    public async Task<IEnumerable<ProjectGroupDto>> GetProjectGroupsForStudentAsync(string studentId)
+    {
+        var groups = await _context.ProjectGroups
+            .Include(g => g.Leader)
+            .Include(g => g.Members)
+                .ThenInclude(m => m.Student)
+            .Where(g => g.Members.Any(m => m.StudentId == studentId))
+            .OrderByDescending(g => g.CreatedAt)
+            .ToListAsync();
+
+        return groups.Select(MapGroupDto).ToList();
+    }
+
+    public async Task<IEnumerable<StudentPeerDto>> GetStudentPeersAsync(string studentId)
+    {
+        var peers = await (from user in _context.Users
+                           join userRole in _context.UserRoles on user.Id equals userRole.UserId
+                           join role in _context.Roles on userRole.RoleId equals role.Id
+                           where role.Name == "Student" && user.Id != studentId
+                           orderby user.FullName
+                           select new StudentPeerDto
+                           {
+                               Id = user.Id,
+                               FullName = user.FullName,
+                               Email = user.Email ?? string.Empty
+                           })
+            .Distinct()
+            .ToListAsync();
+
+        return peers;
+    }
+
+    private static void ValidateProposalContent(ProjectProposal proposal)
+    {
+        if (string.IsNullOrWhiteSpace(proposal.Title) || proposal.Title.Length < 10 || proposal.Title.Length > 150)
+        {
+            throw new ValidationException("Title must be between 10 and 150 characters.");
+        }
+
+        if (string.IsNullOrWhiteSpace(proposal.Abstract) || proposal.Abstract.Length < 100 || proposal.Abstract.Length > 1000)
+        {
+            throw new ValidationException("Abstract must be between 100 and 1000 characters.");
+        }
+
+        proposal.ProposalDocumentUrl = NormalizeProposalDocumentUrl(proposal.ProposalDocumentUrl);
+    }
+
+    private static string? NormalizeProposalDocumentUrl(string? proposalDocumentUrl)
+    {
+        if (string.IsNullOrWhiteSpace(proposalDocumentUrl))
+        {
+            return null;
+        }
+
+        var normalizedUrl = proposalDocumentUrl.Trim();
+
+        if (!Uri.TryCreate(normalizedUrl, UriKind.Absolute, out var uri)
+            || !string.Equals(uri.Host, "res.cloudinary.com", StringComparison.OrdinalIgnoreCase)
+            || !uri.AbsolutePath.Contains("/dy3jmad0j/", StringComparison.OrdinalIgnoreCase)
+            || !uri.AbsolutePath.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ValidationException("Proposal document URL must be a valid Cloudinary PDF URL.");
+        }
+
+        return normalizedUrl;
+    }
+
+    private static ProjectGroupDto MapGroupDto(ProjectGroup group)
+    {
+        return new ProjectGroupDto
+        {
+            Id = group.Id,
+            Name = group.Name,
+            LeaderId = group.LeaderId,
+            LeaderName = group.Leader?.FullName ?? "Unknown Student",
+            CreatedAt = group.CreatedAt,
+            Members = group.Members
+                .OrderBy(m => m.Student?.FullName)
+                .Select(member => new ProjectGroupMemberDto
+                {
+                    StudentId = member.StudentId,
+                    FullName = member.Student?.FullName ?? "Unknown Student",
+                    Email = member.Student?.Email ?? string.Empty,
+                    IsLeader = member.StudentId == group.LeaderId
+                })
+                .ToList()
+        };
     }
 }
 

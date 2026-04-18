@@ -185,6 +185,8 @@ static async Task EnsureDatabaseReadyAsync(ApplicationDbContext dbContext)
         await MarkInitialMigrationAsAppliedAsync(dbContext);
         await dbContext.Database.MigrateAsync();
     }
+
+    await EnsureAuditLogsSchemaAsync(dbContext);
 }
 
 static async Task MarkInitialMigrationAsAppliedAsync(ApplicationDbContext dbContext)
@@ -211,4 +213,49 @@ END;
 """;
 
     await dbContext.Database.ExecuteSqlRawAsync(baselineMigrationSql);
+}
+
+static async Task EnsureAuditLogsSchemaAsync(ApplicationDbContext dbContext)
+{
+    const string ensureAuditLogsTableSql = """
+IF OBJECT_ID(N'[dbo].[AuditLogs]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[AuditLogs] (
+        [Id] int IDENTITY(1,1) NOT NULL,
+        [Action] nvarchar(50) NOT NULL,
+        [EntityType] nvarchar(100) NOT NULL,
+        [EntityId] nvarchar(450) NOT NULL,
+        [ActorUserId] nvarchar(450) NULL,
+        [OldValues] nvarchar(max) NULL,
+        [NewValues] nvarchar(max) NULL,
+        [Timestamp] datetime2 NOT NULL,
+        [IpAddress] nvarchar(50) NULL,
+        CONSTRAINT [PK_AuditLogs] PRIMARY KEY ([Id])
+    );
+END;
+
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.indexes
+    WHERE name = N'IX_AuditLogs_EntityType_EntityId'
+      AND object_id = OBJECT_ID(N'[dbo].[AuditLogs]')
+)
+BEGIN
+    CREATE INDEX [IX_AuditLogs_EntityType_EntityId]
+    ON [dbo].[AuditLogs] ([EntityType], [EntityId]);
+END;
+
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.indexes
+    WHERE name = N'IX_AuditLogs_Timestamp'
+      AND object_id = OBJECT_ID(N'[dbo].[AuditLogs]')
+)
+BEGIN
+    CREATE INDEX [IX_AuditLogs_Timestamp]
+    ON [dbo].[AuditLogs] ([Timestamp]);
+END;
+""";
+
+    await dbContext.Database.ExecuteSqlRawAsync(ensureAuditLogsTableSql);
 }

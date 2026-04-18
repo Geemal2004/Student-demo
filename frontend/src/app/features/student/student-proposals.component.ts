@@ -55,13 +55,13 @@ export class StudentProposalsComponent {
     });
   }
 
-  canEdit(status: string): boolean {
-    return status.toLowerCase() === 'pending';
+  canEdit(proposal: ProposalListItemDto): boolean {
+    return proposal.status.toLowerCase() === 'pending' && proposal.canManage !== false;
   }
 
-  canWithdraw(status: string): boolean {
-    const value = status.toLowerCase();
-    return value !== 'matched' && value !== 'withdrawn';
+  canWithdraw(proposal: ProposalListItemDto): boolean {
+    const value = proposal.status.toLowerCase();
+    return value !== 'matched' && value !== 'withdrawn' && proposal.canManage !== false;
   }
 
   withdraw(id: number): void {

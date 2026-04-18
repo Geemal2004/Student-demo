@@ -5,7 +5,7 @@
 .shell-sidenav {
   width: 300px;
   border-right: 1px solid var(--surface-border);
-  background: linear-gradient(180deg, #fbfefc 0%, #edf7f0 100%);
+  background: var(--color-bg-sidebar);
 }
 
 .shell-sidenav__content {
@@ -26,7 +26,7 @@
   gap: var(--space-2);
 
   &:hover {
-    background: rgba(27, 102, 201, 0.08);
+    background: color-mix(in srgb, var(--color-brand-blue) 10%, transparent);
   }
 
   &:focus-visible {
@@ -74,8 +74,8 @@
   }
 
   &:hover {
-    background: #edf5ff;
-    border-color: #d1e1f3;
+    background: color-mix(in srgb, var(--color-brand-blue) 9%, #ffffff);
+    border-color: color-mix(in srgb, var(--color-brand-blue) 20%, #ffffff);
   }
 
   .nav-link__label {
@@ -88,9 +88,9 @@
 }
 
 .nav-link.active-link {
-  background: #e1f0ff;
-  border-color: #bfdaef;
-  color: #0f4e9f;
+  background: color-mix(in srgb, var(--color-brand-blue) 14%, #ffffff);
+  border-color: color-mix(in srgb, var(--color-brand-blue) 30%, #ffffff);
+  color: var(--accent-blue-strong);
 
   mat-icon {
     color: var(--accent-blue);
@@ -119,7 +119,7 @@
   z-index: 10;
   min-height: 72px;
   padding: var(--space-3) var(--space-5);
-  background: rgba(244, 251, 248, 0.93);
+  background: color-mix(in srgb, var(--color-bg-sidebar) 94%, #ffffff);
   border-bottom: 1px solid var(--surface-border);
   backdrop-filter: blur(8px);
 }
@@ -172,7 +172,7 @@
 
 .toolbar-user__avatar.toolbar-user__avatar--image {
   border: 1px solid var(--surface-border-strong);
-  background: #ffffff;
+  background: var(--color-bg-surface);
 }
 
 .toolbar-user__avatar img {
@@ -199,8 +199,8 @@
 .shell-main {
   padding: var(--space-5) clamp(1rem, 2.6vw, 2rem) var(--space-7);
   background:
-    radial-gradient(circle at 86% -8%, rgba(27, 102, 201, 0.11), transparent 26%),
-    radial-gradient(circle at 4% 102%, rgba(57, 181, 74, 0.1), transparent 28%);
+    radial-gradient(circle at 86% -8%, rgba(24, 89, 156, 0.08), transparent 26%),
+    radial-gradient(circle at 4% 102%, rgba(57, 180, 74, 0.07), transparent 28%);
 }
 
 .shell-page-container {

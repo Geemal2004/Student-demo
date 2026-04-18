@@ -2,13 +2,27 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_BASE_URL, API_ENDPOINTS } from './api.config';
-import { ProposalDetailsDto, ProposalListItemDto, ResearchAreaDto, StudentDashboardDto } from '../models/api.models';
+import {
+  ProjectGroupDto,
+  ProposalDetailsDto,
+  ProposalListItemDto,
+  ResearchAreaDto,
+  StudentDashboardDto,
+  StudentPeerDto
+} from '../models/api.models';
 
 export interface ProposalUpsertRequest {
   title: string;
   abstract: string;
   technicalStack?: string;
+  proposalDocumentUrl?: string;
   researchAreaId: number;
+  projectGroupId?: number;
+}
+
+export interface CreateProjectGroupRequest {
+  name: string;
+  memberStudentIds: string[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -41,5 +55,17 @@ export class StudentApiService {
 
   getResearchAreas(): Observable<ResearchAreaDto[]> {
     return this.http.get<ResearchAreaDto[]>(`${API_BASE_URL}${API_ENDPOINTS.student.researchAreas}`);
+  }
+
+  getProjectGroups(): Observable<ProjectGroupDto[]> {
+    return this.http.get<ProjectGroupDto[]>(`${API_BASE_URL}${API_ENDPOINTS.student.groups}`);
+  }
+
+  createProjectGroup(payload: CreateProjectGroupRequest): Observable<ProjectGroupDto> {
+    return this.http.post<ProjectGroupDto>(`${API_BASE_URL}${API_ENDPOINTS.student.groups}`, payload);
+  }
+
+  getStudentPeers(): Observable<StudentPeerDto[]> {
+    return this.http.get<StudentPeerDto[]>(`${API_BASE_URL}${API_ENDPOINTS.student.peers}`);
   }
 }

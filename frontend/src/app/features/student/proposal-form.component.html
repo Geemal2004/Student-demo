@@ -1,6 +1,6 @@
 <app-page-header
   [title]="editing() ? 'Edit Proposal' : 'Create Proposal'"
-  [subtitle]="editing() ? 'Update your proposal before matching proceeds.' : 'Submit your project idea for blind matching.'">
+  [subtitle]="editing() ? 'Update your proposal before matching proceeds.' : 'Submit an individual or group project proposal for blind matching.'">
   <a actions mat-stroked-button class="btn-secondary" routerLink="/student/proposals">Back to proposals</a>
 </app-page-header>
 
@@ -16,6 +16,84 @@
     </div>
 
     <form [formGroup]="form" (ngSubmit)="submit()" class="proposal-form">
+      <section class="project-mode-section ui-subtle-surface">
+        <p class="ui-eyebrow">Project Type</p>
+        <mat-radio-group class="project-mode-options" formControlName="projectType" aria-label="Project proposal type">
+          <mat-radio-button value="individual">Individual proposal</mat-radio-button>
+          <mat-radio-button value="group">Group proposal</mat-radio-button>
+        </mat-radio-group>
+      </section>
+
+      @if (form.controls.projectType.value === 'group') {
+        <p class="group-empty-note">Add teammates below. Your group will be created automatically when you submit this proposal.</p>
+
+        @if (!editing()) {
+          <section class="group-builder ui-subtle-surface" [formGroup]="groupForm">
+            <div class="group-builder__head">
+              <p class="ui-eyebrow">Team Members For This Proposal</p>
+              <p>Choose teammates and submit once. No standalone group creation is required.</p>
+            </div>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Group name</mat-label>
+              <input matInput formControlName="name" placeholder="Example: Smart Campus Team" />
+              @if (groupForm.controls.name.touched && groupForm.controls.name.hasError('required')) {
+                <mat-error>Group name is required.</mat-error>
+              }
+              @if (groupForm.controls.name.touched && groupForm.controls.name.hasError('minlength')) {
+                <mat-error>Group name must be at least 3 characters.</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Search team members</mat-label>
+              <input matInput [formControl]="memberSearchControl" placeholder="Type name or email" />
+              <mat-hint>Search and click a student below to add to your team.</mat-hint>
+            </mat-form-field>
+
+            @if (peers().length === 0) {
+              <p class="group-empty-note">No other student accounts are available yet.</p>
+            } @else {
+              <div class="member-results" *ngIf="filteredPeers().length > 0; else noMemberMatches">
+                @for (peer of filteredPeers(); track peer.id) {
+                  <button type="button" class="member-result" (click)="addMember(peer.id)">
+                    <span class="member-result__copy">
+                      <span class="member-result__name">{{ peer.fullName }}</span>
+                      <span class="member-result__email">{{ peer.email }}</span>
+                    </span>
+                    <mat-icon>add</mat-icon>
+                  </button>
+                }
+              </div>
+
+              <ng-template #noMemberMatches>
+                <p class="group-empty-note">No teammates match your search.</p>
+              </ng-template>
+            }
+
+            @if (selectedPeers().length > 0) {
+              <div class="selected-member-list">
+                @for (member of selectedPeers(); track member.id) {
+                  <article class="selected-member">
+                    <div class="selected-member__copy">
+                      <p class="selected-member__name">{{ member.fullName }}</p>
+                      <p class="selected-member__email">{{ member.email }}</p>
+                    </div>
+                    <button type="button" mat-icon-button (click)="removeMember(member.id)" aria-label="Remove teammate">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </article>
+                }
+              </div>
+            }
+
+            @if (groupForm.controls.memberStudentIds.touched && (groupForm.controls.memberStudentIds.hasError('required') || groupForm.controls.memberStudentIds.hasError('minlength'))) {
+              <p class="field-error">Select at least one teammate.</p>
+            }
+          </section>
+        }
+      }
+
       <mat-form-field appearance="outline">
         <mat-label>Title</mat-label>
         <input matInput formControlName="title" />
@@ -51,6 +129,38 @@
         }
       </mat-form-field>
 
+      <section class="document-upload ui-subtle-surface">
+        <div class="document-upload__head">
+          <p class="ui-eyebrow">Proposal Document (PDF)</p>
+          <p>Optional. Upload a supporting proposal brief (max 10MB).</p>
+        </div>
+
+        <div class="document-upload__actions">
+          <label class="upload-trigger" [class.upload-trigger--disabled]="uploadingDocument()">
+            <input type="file" accept="application/pdf,.pdf" (change)="onDocumentSelected($event)" [disabled]="uploadingDocument()" />
+            <mat-icon>{{ uploadingDocument() ? 'cloud_upload' : 'upload_file' }}</mat-icon>
+            <span>{{ uploadingDocument() ? 'Uploading PDF...' : (form.controls.proposalDocumentUrl.value ? 'Replace PDF' : 'Upload PDF') }}</span>
+          </label>
+
+          @if (form.controls.proposalDocumentUrl.value) {
+            <a
+              mat-stroked-button
+              class="btn-secondary"
+              [href]="proposalDocumentViewUrl()"
+              target="_blank"
+              rel="noopener noreferrer">
+              View current PDF preview
+            </a>
+
+            <button mat-stroked-button type="button" class="btn-danger" (click)="removeDocument()">Remove PDF</button>
+          }
+        </div>
+
+        @if (form.controls.proposalDocumentUrl.value) {
+          <p class="document-upload__name">{{ proposalDocumentFileName() }}</p>
+        }
+      </section>
+
       <mat-form-field appearance="outline">
         <mat-label>Research area</mat-label>
         <mat-select formControlName="researchAreaId">
@@ -65,7 +175,7 @@
 
       <div class="form-actions">
         <a mat-stroked-button class="btn-secondary" routerLink="/student/proposals">{{ editing() ? 'Cancel' : 'Back' }}</a>
-        <button mat-flat-button class="btn-primary" type="submit" [disabled]="form.invalid">
+        <button mat-flat-button class="btn-primary" type="submit" [disabled]="submitDisabled()">
           {{ editing() ? 'Save changes' : 'Submit proposal' }}
         </button>
       </div>

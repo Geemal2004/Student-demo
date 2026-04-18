@@ -22,10 +22,18 @@ public class ProjectProposal
     [MaxLength(200)]
     public string? TechnicalStack { get; set; }
 
+    [MaxLength(500)]
+    public string? ProposalDocumentUrl { get; set; }
+
     public int ResearchAreaId { get; set; }
 
     [ForeignKey(nameof(ResearchAreaId))]
     public ResearchArea? ResearchArea { get; set; }
+
+    public int? ProjectGroupId { get; set; }
+
+    [ForeignKey(nameof(ProjectGroupId))]
+    public ProjectGroup? ProjectGroup { get; set; }
 
     [Required]
     public string StudentId { get; set; } = string.Empty;

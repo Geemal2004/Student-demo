@@ -11,12 +11,12 @@
       [abstract]="proposal.abstract"
       [researchArea]="proposal.researchAreaName"
       [techStack]="proposal.technicalStack ?? ''"
-      [meta]="'Submitted ' + (proposal.createdAt | date: 'mediumDate')"
+      [meta]="(proposal.isGroupProject ? ('Group: ' + (proposal.projectGroupName || 'Unnamed group') + ' • ') : '') + 'Submitted ' + (proposal.createdAt | date: 'mediumDate')"
       [status]="proposal.status">
       <div actions>
         <a mat-stroked-button class="btn-secondary" [routerLink]="['/student/proposals', proposal.id]">Details</a>
-        <a *ngIf="canEdit(proposal.status)" mat-stroked-button class="btn-secondary" [routerLink]="['/student/proposals', proposal.id, 'edit']">Edit</a>
-        <button *ngIf="canWithdraw(proposal.status)" mat-stroked-button class="btn-danger" (click)="withdraw(proposal.id)">Withdraw</button>
+        <a *ngIf="canEdit(proposal)" mat-stroked-button class="btn-secondary" [routerLink]="['/student/proposals', proposal.id, 'edit']">Edit</a>
+        <button *ngIf="canWithdraw(proposal)" mat-stroked-button class="btn-danger" (click)="withdraw(proposal.id)">Withdraw</button>
       </div>
     </app-proposal-card>
   }

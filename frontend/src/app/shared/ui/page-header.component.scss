@@ -7,8 +7,8 @@
   padding: var(--space-4) var(--space-5);
   border-radius: var(--radius-lg);
   border: 1px solid var(--surface-border);
-  background: linear-gradient(120deg, rgba(255, 255, 255, 0.9) 0%, rgba(237, 248, 240, 0.94) 100%);
-  box-shadow: var(--shadow-xs);
+  background: linear-gradient(180deg, #ffffff 0%, var(--color-bg-surface) 100%);
+  box-shadow: var(--shadow-card);
 }
 
 .page-header__copy {

@@ -8,18 +8,20 @@ import { ResearchAreaDto } from '../../core/models/api.models';
   standalone: true,
   imports: [NgFor, MatChipsModule],
   template: `
-    <mat-chip-set>
+    <mat-chip-set class="expertise-chip-set" aria-label="Research area expertise selector">
       <mat-chip *ngFor="let area of areas"
+        class="expertise-chip"
+        [disableRipple]="true"
         [class.selected]="selectedIds.includes(area.id)"
-        (click)="toggle(area.id)">
+        (click)="toggle(area.id)"
+        (keydown.enter)="toggle(area.id)"
+        (keydown.space)="toggle(area.id); $event.preventDefault()"
+        tabindex="0">
         {{ area.name }}
       </mat-chip>
     </mat-chip-set>
   `,
-  styles: [
-    'mat-chip{cursor:pointer}',
-    'mat-chip.selected{background:var(--accent-blue);color:#fff}'
-  ],
+  styleUrls: ['./expertise-chip-selector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExpertiseChipSelectorComponent {

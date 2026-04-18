@@ -33,6 +33,14 @@ public static class SeedData
         await SeedUserIfNotExists(userManager, "supervisor2@blindmatch.ac.lk", "Super@123456", "Dr. Emily Chen", "Supervisor");
         await SeedUserIfNotExists(userManager, "student1@blindmatch.ac.lk", "Student@123", "Alex Thompson", "Student");
         await SeedUserIfNotExists(userManager, "student2@blindmatch.ac.lk", "Student@123", "Maria Garcia", "Student");
+        await SeedUserIfNotExists(userManager, "student3@blindmatch.ac.lk", "Student@123", "Nimal Perera", "Student");
+        await SeedUserIfNotExists(userManager, "student4@blindmatch.ac.lk", "Student@123", "Anjali Fernando", "Student");
+        await SeedUserIfNotExists(userManager, "student5@blindmatch.ac.lk", "Student@123", "Kasun Jayawardena", "Student");
+        await SeedUserIfNotExists(userManager, "student6@blindmatch.ac.lk", "Student@123", "Dilini Gunasekara", "Student");
+        await SeedUserIfNotExists(userManager, "student7@blindmatch.ac.lk", "Student@123", "Chamath De Silva", "Student");
+        await SeedUserIfNotExists(userManager, "student8@blindmatch.ac.lk", "Student@123", "Tharushi Wickramasinghe", "Student");
+        await SeedUserIfNotExists(userManager, "student9@blindmatch.ac.lk", "Student@123", "Harini Senanayake", "Student");
+        await SeedUserIfNotExists(userManager, "student10@blindmatch.ac.lk", "Student@123", "Ruwan Hettiarachchi", "Student");
 
         // Seed research areas
         if (!await context.ResearchAreas.AnyAsync())

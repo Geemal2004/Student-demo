@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { StudentApiService } from '../../core/services/student-api.service';
 import { ProposalDetailsDto } from '../../core/models/api.models';
+import { getProposalDocumentViewUrl } from '../../core/utils/document-url.util';
 import { ToastService } from '../../core/services/toast.service';
 import { EmptyStateComponent } from '../../shared/ui/empty-state.component';
 import { PageHeaderComponent } from '../../shared/ui/page-header.component';
@@ -49,7 +50,11 @@ export class StudentProposalDetailsComponent {
     });
   }
 
-  isPending(status: string): boolean {
-    return status.toLowerCase() === 'pending';
+  canEdit(item: ProposalDetailsDto): boolean {
+    return item.status.toLowerCase() === 'pending' && item.canManage !== false;
+  }
+
+  proposalDocumentViewUrl(url?: string | null): string | null {
+    return getProposalDocumentViewUrl(url);
   }
 }

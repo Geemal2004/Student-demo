@@ -27,9 +27,9 @@ mat-form-field {
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-  background: rgba(31, 99, 215, 0.12);
+  background: color-mix(in srgb, var(--accent-blue) 12%, #ffffff);
   color: var(--accent-blue);
-  border: 1px solid rgba(31, 99, 215, 0.24);
+  border: 1px solid color-mix(in srgb, var(--accent-blue) 24%, #ffffff);
 }
 
 .card-grid {

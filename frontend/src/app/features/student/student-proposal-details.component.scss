@@ -28,9 +28,9 @@
   gap: var(--space-3);
 
   article {
-    border: 1px solid #dde6f3;
+    border: 1px solid var(--surface-border);
     border-radius: 12px;
-    background: #f8fbff;
+    background: var(--color-bg-surface);
     padding: var(--space-3);
     display: grid;
     gap: var(--space-2);
@@ -50,6 +50,16 @@
   font-weight: 700;
 }
 
+.document-link {
+  color: var(--accent-blue);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.document-link:hover {
+  text-decoration: underline;
+}
+
 .reveal-section {
   display: grid;
   gap: var(--space-4);
@@ -61,7 +71,7 @@
   align-items: flex-start;
   gap: var(--space-4);
   border-style: dashed;
-  background: linear-gradient(160deg, #ffffff 0%, #f8fbff 100%);
+  background: var(--color-bg-surface);
 
   h3 {
     margin-top: var(--space-2);
@@ -82,8 +92,8 @@
   place-items: center;
   flex: 0 0 auto;
   color: var(--accent-blue);
-  background: rgba(31, 99, 215, 0.13);
-  border: 1px solid rgba(31, 99, 215, 0.24);
+  background: color-mix(in srgb, var(--accent-blue) 14%, #ffffff);
+  border: 1px solid color-mix(in srgb, var(--accent-blue) 24%, #ffffff);
 }
 
 @media (max-width: 900px) {

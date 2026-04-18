@@ -13,35 +13,35 @@
 .pending {
   background: var(--status-pending-bg);
   color: var(--status-pending-fg);
-  border-color: rgba(173, 109, 25, 0.24);
+  border-color: color-mix(in srgb, var(--status-pending-fg) 24%, #ffffff);
 }
 
 .review {
   background: var(--status-review-bg);
   color: var(--status-review-fg);
-  border-color: rgba(31, 99, 215, 0.24);
+  border-color: color-mix(in srgb, var(--status-review-fg) 24%, #ffffff);
 }
 
 .matched {
   background: var(--status-matched-bg);
   color: var(--status-matched-fg);
-  border-color: rgba(29, 139, 79, 0.24);
+  border-color: color-mix(in srgb, var(--status-matched-fg) 24%, #ffffff);
 }
 
 .withdrawn {
   background: var(--status-withdrawn-bg);
   color: var(--status-withdrawn-fg);
-  border-color: rgba(196, 61, 50, 0.24);
+  border-color: color-mix(in srgb, var(--status-withdrawn-fg) 24%, #ffffff);
 }
 
 .revealed {
   background: var(--status-revealed-bg);
   color: var(--status-revealed-fg);
-  border-color: rgba(128, 81, 205, 0.24);
+  border-color: color-mix(in srgb, var(--status-revealed-fg) 24%, #ffffff);
 }
 
 .default {
-  background: #edf1f8;
-  color: #4f5f79;
-  border-color: #d5ddec;
+  background: var(--color-bg-sidebar);
+  color: var(--text-muted);
+  border-color: var(--surface-border);
 }

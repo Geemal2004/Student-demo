@@ -13,7 +13,7 @@
   border: 1px solid var(--surface-border);
   border-radius: 14px;
   padding: var(--space-4);
-  background: linear-gradient(130deg, rgba(255, 255, 255, 0.92) 0%, rgba(236, 248, 240, 0.9) 100%);
+  background: var(--color-bg-surface);
 }
 
 .profile-avatar {
@@ -27,7 +27,7 @@
   color: #ffffff;
   background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-cyan) 100%);
   overflow: hidden;
-  box-shadow: 0 10px 24px rgba(15, 62, 123, 0.16);
+  box-shadow: var(--shadow-card);
 }
 
 .profile-avatar span {
@@ -35,8 +35,8 @@
 }
 
 .profile-avatar.profile-avatar--image {
-  background: #ffffff;
-  border: 2px solid #ffffff;
+  background: var(--color-bg-surface);
+  border: 2px solid var(--color-bg-surface);
 }
 
 .profile-avatar img {
@@ -113,7 +113,7 @@
   border: 1px solid var(--surface-border);
   border-radius: 12px;
   padding: var(--space-3) var(--space-4);
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--color-bg-surface);
   display: grid;
   gap: 0.2rem;
 }

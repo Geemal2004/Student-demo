@@ -44,6 +44,15 @@
   min-height: 3.8em;
 }
 
+.proposal-card__abstract.proposal-card__abstract--expanded {
+  display: block;
+  -webkit-line-clamp: unset;
+  -webkit-box-orient: unset;
+  overflow: visible;
+  min-height: 0;
+  line-height: 1.7;
+}
+
 .proposal-card__details {
   display: flex;
   flex-wrap: wrap;
@@ -77,9 +86,9 @@
   padding: 0.24rem 0.62rem;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #38517b;
-  background: #edf3ff;
-  border: 1px solid #d9e4fa;
+  color: var(--bg-contrast);
+  background: color-mix(in srgb, var(--color-brand-blue) 10%, #ffffff);
+  border: 1px solid color-mix(in srgb, var(--color-brand-blue) 24%, #ffffff);
 }
 
 .proposal-card__actions {
@@ -89,7 +98,7 @@
   flex-wrap: wrap;
   gap: var(--space-2);
   padding-top: var(--space-3);
-  border-top: 1px solid #edf2fb;
+  border-top: 1px solid var(--surface-border);
 }
 
 @media (max-width: 640px) {

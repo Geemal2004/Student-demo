@@ -54,8 +54,18 @@
       [researchArea]="proposal.researchAreaName"
       [techStack]="proposal.technicalStack ?? ''"
       [meta]="'Submitted ' + (proposal.createdAt | date: 'mediumDate')"
-      [status]="proposal.status">
+      [status]="proposal.status"
+      [showFullDetails]="true">
       <div actions>
+        <a
+          *ngIf="proposal.proposalDocumentUrl"
+          mat-stroked-button
+          class="btn-secondary"
+          [href]="proposalDocumentViewUrl(proposal.proposalDocumentUrl)"
+          target="_blank"
+          rel="noopener noreferrer">
+          View PDF preview
+        </a>
         <button mat-flat-button class="btn-primary" (click)="expressInterest(proposal.id)">Express Interest</button>
       </div>
     </app-proposal-card>

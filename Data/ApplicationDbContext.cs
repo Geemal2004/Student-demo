@@ -12,6 +12,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     }
 
     public DbSet<ProjectProposal> Proposals => Set<ProjectProposal>();
+    public DbSet<ProjectGroup> ProjectGroups => Set<ProjectGroup>();
+    public DbSet<ProjectGroupMember> ProjectGroupMembers => Set<ProjectGroupMember>();
     public DbSet<ResearchArea> ResearchAreas => Set<ResearchArea>();
     public DbSet<SupervisorMatch> SupervisorMatches => Set<SupervisorMatch>();
     public DbSet<SupervisorExpertise> SupervisorExpertises => Set<SupervisorExpertise>();
@@ -43,8 +45,48 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 .HasForeignKey(p => p.ResearchAreaId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            entity.HasOne(p => p.ProjectGroup)
+                .WithMany(g => g.Proposals)
+                .HasForeignKey(p => p.ProjectGroupId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             entity.Property(p => p.Status)
                 .HasConversion<string>();
+
+            entity.HasIndex(p => p.ProjectGroupId);
+        });
+
+        // ProjectGroup with leader/member relationships
+        builder.Entity<ProjectGroup>(entity =>
+        {
+            entity.Property(g => g.Name)
+                .HasMaxLength(100)
+                .IsRequired();
+
+            entity.HasOne(g => g.Leader)
+                .WithMany(u => u.LedProjectGroups)
+                .HasForeignKey(g => g.LeaderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(g => g.LeaderId);
+        });
+
+        builder.Entity<ProjectGroupMember>(entity =>
+        {
+            entity.HasOne(gm => gm.ProjectGroup)
+                .WithMany(g => g.Members)
+                .HasForeignKey(gm => gm.ProjectGroupId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(gm => gm.Student)
+                .WithMany(u => u.ProjectGroupMemberships)
+                .HasForeignKey(gm => gm.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(gm => new { gm.ProjectGroupId, gm.StudentId })
+                .IsUnique();
+
+            entity.HasIndex(gm => gm.StudentId);
         });
 
         // SupervisorMatch with RowVersion concurrency token

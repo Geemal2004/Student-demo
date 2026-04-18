@@ -45,9 +45,9 @@
 }
 
 .recent-card {
-  border: 1px solid #dce5f4;
+  border: 1px solid var(--surface-border);
   border-radius: 14px;
-  background: #f9fbff;
+  background: var(--color-bg-surface);
   padding: var(--space-4);
   display: grid;
   gap: var(--space-3);

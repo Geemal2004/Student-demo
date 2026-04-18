@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { SupervisorApiService } from '../../core/services/supervisor-api.service';
 import { BlindProposalDto, PagedResult, ResearchAreaDto } from '../../core/models/api.models';
+import { getProposalDocumentViewUrl } from '../../core/utils/document-url.util';
 import { ToastService } from '../../core/services/toast.service';
 import { EmptyStateComponent } from '../../shared/ui/empty-state.component';
 import { FilterBarComponent } from '../../shared/ui/filter-bar.component';
@@ -107,5 +108,9 @@ export class SupervisorBrowseComponent {
       },
       error: (error) => this.toast.error(error?.error?.message ?? 'Unable to express interest.')
     });
+  }
+
+  proposalDocumentViewUrl(url?: string | null): string | null {
+    return getProposalDocumentViewUrl(url);
   }
 }

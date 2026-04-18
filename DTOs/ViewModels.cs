@@ -7,10 +7,41 @@ public class StudentProposalDto
     public string Title { get; set; } = string.Empty;
     public string Abstract { get; set; } = string.Empty;
     public string? TechnicalStack { get; set; }
+    public string? ProposalDocumentUrl { get; set; }
     public string ResearchAreaName { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
+    public bool IsGroupProject { get; set; }
+    public int? ProjectGroupId { get; set; }
+    public string? ProjectGroupName { get; set; }
+    public List<string> GroupMembers { get; set; } = new();
+    public bool CanManage { get; set; }
     public RevealedMatchDto? MatchedSupervisor { get; set; }
+}
+
+public class ProjectGroupDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string LeaderId { get; set; } = string.Empty;
+    public string LeaderName { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
+    public List<ProjectGroupMemberDto> Members { get; set; } = new();
+}
+
+public class ProjectGroupMemberDto
+{
+    public string StudentId { get; set; } = string.Empty;
+    public string FullName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public bool IsLeader { get; set; }
+}
+
+public class StudentPeerDto
+{
+    public string Id { get; set; } = string.Empty;
+    public string FullName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
 }
 
 public class RevealedMatchDto

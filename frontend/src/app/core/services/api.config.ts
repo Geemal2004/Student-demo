@@ -11,7 +11,9 @@ export const API_ENDPOINTS = {
   student: {
     dashboard: '/api/student/dashboard',
     proposals: '/api/student/proposals',
-    researchAreas: '/api/student/research-areas'
+    researchAreas: '/api/student/research-areas',
+    groups: '/api/student/groups',
+    peers: '/api/student/peers'
   },
   supervisor: {
     dashboard: '/api/supervisor/dashboard',

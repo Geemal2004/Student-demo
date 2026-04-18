@@ -1,8 +1,8 @@
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.8rem;
-  margin-bottom: 0.8rem;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
 }
 
 .quick-actions {
@@ -19,7 +19,7 @@
 .action-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: var(--space-3);
   align-items: center;
 }
 

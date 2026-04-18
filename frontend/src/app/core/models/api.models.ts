@@ -40,9 +40,15 @@ export interface ProposalListItemDto {
   title: string;
   abstract: string;
   technicalStack?: string;
+  proposalDocumentUrl?: string;
   researchAreaName: string;
   status: ProposalStatus;
   createdAt: string;
+  isGroupProject?: boolean;
+  projectGroupId?: number;
+  projectGroupName?: string;
+  groupMembers?: string[];
+  canManage?: boolean;
   matchedSupervisor?: RevealDetailsDto;
 }
 
@@ -53,6 +59,7 @@ export interface BlindProposalDto {
   title: string;
   abstract: string;
   technicalStack?: string;
+  proposalDocumentUrl?: string;
   researchAreaName: string;
   status: ProposalStatus;
   createdAt: string;
@@ -64,6 +71,28 @@ export interface ResearchAreaDto {
   description?: string;
 }
 
+export interface ProjectGroupMemberDto {
+  studentId: string;
+  fullName: string;
+  email: string;
+  isLeader: boolean;
+}
+
+export interface ProjectGroupDto {
+  id: number;
+  name: string;
+  leaderId: string;
+  leaderName: string;
+  createdAt: string;
+  members: ProjectGroupMemberDto[];
+}
+
+export interface StudentPeerDto {
+  id: string;
+  fullName: string;
+  email: string;
+}
+
 export interface MatchSummaryDto {
   matchId: number;
   proposalId: number;
@@ -73,6 +102,9 @@ export interface MatchSummaryDto {
   researchAreaName?: string;
   studentName?: string;
   studentEmail?: string;
+  isGroupProject?: boolean;
+  projectGroupName?: string;
+  groupMembers?: string[];
   projectTitle?: string;
   confirmedAt?: string;
 }
