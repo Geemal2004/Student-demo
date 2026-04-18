@@ -1,7 +1,22 @@
-<div class="auth-wrap">
-  <mat-card>
-    <h2>Create account</h2>
-    <form [formGroup]="form" (ngSubmit)="submit()">
+<div class="auth-shell">
+  <section class="auth-hero">
+    <p class="auth-hero__eyebrow">Secure Onboarding</p>
+    <h2>Join BlindMatch PAS in under a minute.</h2>
+    <p>Create your account to start role-based participation in fair project supervision allocation.</p>
+
+    <ul>
+      <li>Students submit anonymized proposals</li>
+      <li>Supervisors review without identity bias</li>
+      <li>Identity is revealed only after confirmed matching</li>
+    </ul>
+  </section>
+
+  <mat-card class="auth-card ui-card">
+    <p class="eyebrow">BlindMatch PAS</p>
+    <h1>Create account</h1>
+    <p class="subtitle">Register as a student or supervisor to access your workspace.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
       <mat-form-field appearance="outline">
         <mat-label>Full name</mat-label>
         <input matInput formControlName="fullName" />
@@ -27,11 +42,11 @@
         <mat-radio-button value="Supervisor">Supervisor</mat-radio-button>
       </mat-radio-group>
 
-      <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">
+      <button mat-flat-button class="btn-primary" type="submit" [disabled]="submitting()">
         {{ submitting() ? 'Creating...' : 'Create account' }}
       </button>
     </form>
 
-    <p>Already have an account? <a routerLink="/auth/login">Sign in</a></p>
+    <p class="muted">Already have an account? <a routerLink="/auth/login">Sign in</a></p>
   </mat-card>
 </div>

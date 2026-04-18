@@ -1,9 +1,25 @@
-<div class="auth-wrap">
-  <mat-card>
-    <p class="eyebrow" (click)="toLanding()">BlindMatch PAS</p>
-    <h2>Sign in</h2>
+<div class="auth-shell">
+  <section class="auth-hero">
+    <p class="auth-hero__eyebrow">Academic Allocation Platform</p>
+    <h2>Fair supervision starts with blind matching.</h2>
+    <p>
+      BlindMatch PAS protects student anonymity until confirmation, giving your department a transparent,
+      equitable project assignment workflow.
+    </p>
 
-    <form [formGroup]="form" (ngSubmit)="submit()">
+    <ul>
+      <li>Anonymous proposal review before confirmation</li>
+      <li>Role-based secure workspaces for each actor</li>
+      <li>Audit-friendly allocation lifecycle</li>
+    </ul>
+  </section>
+
+  <mat-card class="auth-card ui-card">
+    <p class="eyebrow" (click)="toLanding()">BlindMatch PAS</p>
+    <h1>Welcome back</h1>
+    <p class="subtitle">Sign in to continue your secure project allocation workflow.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
       <mat-form-field appearance="outline">
         <mat-label>Email</mat-label>
         <input matInput type="email" formControlName="email" />
@@ -20,13 +36,13 @@
         }
       </mat-form-field>
 
-      <mat-checkbox formControlName="rememberMe">Remember me</mat-checkbox>
+      <mat-checkbox formControlName="rememberMe">Remember me on this device</mat-checkbox>
 
-      <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">
-        {{ submitting() ? 'Signing in...' : 'Sign in' }}
+      <button mat-flat-button class="btn-primary" type="submit" [disabled]="submitting()">
+        {{ submitting() ? 'Signing in...' : 'Sign in to workspace' }}
       </button>
     </form>
 
-    <p class="muted">No account yet? <a routerLink="/auth/register">Register here</a></p>
+    <p class="muted">No account yet? <a routerLink="/auth/register">Create an account</a></p>
   </mat-card>
 </div>
